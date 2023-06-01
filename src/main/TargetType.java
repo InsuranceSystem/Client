@@ -1,0 +1,5 @@
+package main;
+
+public enum TargetType {
+	EXPIRED_CONTRACTS, UNPAID_CUSTOMERS, RESURRECT_CANDIDATES
+	}

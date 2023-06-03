@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
+
 public interface PaymentList {
 
 	boolean add(String paymentInfo) throws ParseException, IOException ;
@@ -19,5 +20,13 @@ public interface PaymentList {
 	ArrayList<String> retreiveDateStatusById(String selectedCustomerId, String selectedInsuranceId);
 
 	void update();
+
+	ArrayList<Payment> retreiveCustomerInsurancePayment(String customerId, String selectedInsuranceId);
+
+	boolean updateWhetherPayment(String selectedCustomerId, String selectedInsuranceId);
+
+	void update(Payment payment);
+	
+
 
 }

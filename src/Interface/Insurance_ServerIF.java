@@ -1,5 +1,4 @@
 package Interface;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -14,4 +13,3 @@ public interface Insurance_ServerIF extends Remote{
 
 	public TermsList getTermsList() throws RemoteException;
 }
-

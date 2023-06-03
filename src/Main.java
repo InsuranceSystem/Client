@@ -36,6 +36,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -54,11 +56,18 @@ import java.util.Map;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		CC_ServerIF ccserver = (CC_ServerIF) Naming.lookup("CompensationClaim_Server");
-		Contract_ServerIF contractserver = (Contract_ServerIF) Naming.lookup("ContractServer");
-		Customer_ServerIF customerserver = (Customer_ServerIF) Naming.lookup("CustomerServer");
-		Insurance_ServerIF Insuranceserver = (Insurance_ServerIF) Naming.lookup("InsuranceServer");
-	
+		 Registry registry_ccserver = LocateRegistry.getRegistry("localhost", 1300);
+		 Registry registry_insuranceserver = LocateRegistry.getRegistry("localhost", 1400);
+		 Registry registry_customerserver = LocateRegistry.getRegistry("localhost", 1500);
+		 Registry registry_contractserver = LocateRegistry.getRegistry("localhost", 1600);
+		 
+		CC_ServerIF ccserver = (CC_ServerIF) registry_ccserver.lookup("CompensationClaim_Server");
+		System.out.println("CompensationClaim_Server is ready");
+		Insurance_ServerIF Insuranceserver = (Insurance_ServerIF) registry_insuranceserver.lookup("InsuranceServer");
+		System.out.println("InsuranceServer is ready");
+		Contract_ServerIF contractserver = (Contract_ServerIF) registry_contractserver.lookup("ContractServer");
+		Customer_ServerIF customerserver = (Customer_ServerIF) registry_customerserver.lookup("CustomerServer");
+
 		CompensationClaimList compensationClaimList = 	ccserver.getCompensationClaimList();
 		SurveyList surveyList = ccserver.getSurveyList();
 		CarAccidentList carAccidentList = ccserver.getCarAccidentList();

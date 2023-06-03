@@ -1,9 +1,12 @@
 package Interface;
 
-public interface Customer_ServerIF {
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
-	public CustomerList getCustomerList();
-	public FamilyHistoryList getFamilyHistoryList();
-	public CounselList getCounselList();
-	public CounselApplicationList getCounselApplicationList();
+public interface Customer_ServerIF extends Remote{
+
+	public CustomerList getCustomerList() throws RemoteException;
+	public FamilyHistoryList getFamilyHistoryList() throws RemoteException;
+	public CounselList getCounselList() throws RemoteException;
+	public CounselApplicationList getCounselApplicationList() throws RemoteException;
 }

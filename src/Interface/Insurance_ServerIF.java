@@ -1,12 +1,17 @@
 package Interface;
 
-public interface Insurance_ServerIF {
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
-	public InsuranceList getInsuranceList();
 
-	public GuaranteeList getGuaranteeList();
+public interface Insurance_ServerIF extends Remote{
 
-	public InsuranceApplicationList getInsuranceApplicationList();
+	public InsuranceList getInsuranceList() throws RemoteException;
 
-	public TermsList getTermsList();
+	public GuaranteeList getGuaranteeList() throws RemoteException;
+
+	public InsuranceApplicationList getInsuranceApplicationList() throws RemoteException;
+
+	public TermsList getTermsList() throws RemoteException;
 }
+

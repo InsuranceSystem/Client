@@ -1241,7 +1241,8 @@ public class Main {
 			Insurance insurance;
 			System.out.print("보험 ID : ");
 			insuranceID = inputReader.readLine().trim();
-			if(!insuranceListImpl.isExistInsuranceDesign(insuranceID)) {System.out.println("존재하지 않는 보험 설계서입니다."); break;}
+			if(insuranceID.equals("x")) break;
+			else if(!insuranceListImpl.isExistInsuranceDesign(insuranceID)) {System.out.println("존재하지 않는 보험 설계서입니다."); break;}
 			if (!insuranceID.equals("x")) {
 				insurance = insuranceListImpl.retrieveInsuranceDetail(insuranceID);
 				System.out.println("1. 수정, 2. 삭제");
@@ -1380,6 +1381,7 @@ public class Main {
 		}
 		
 		System.out.println("수정한 내용을 저장하시겠습니까? (Y/N)");
+		System.out.print("수정된 내용 : ");
 		System.out.println(insurance.toStringDesignInsurance());
 		while(true) {
 		System.out.println("선택 : ");

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+
 public interface InsuranceList{
 
 	boolean createInsurance(Insurance insurance) throws FileNotFoundException, IOException, Exception;
@@ -24,7 +25,7 @@ public interface InsuranceList{
 
 	String requestAuthorization(String insuranceID);
 
-	boolean updateAuthorization(String insuranceID, boolean b);
+	boolean updateAuthorization(String insuranceID, boolean b) throws Exception;
 
 	ArrayList<Insurance> getOnSaleInsuranceList();
 
@@ -36,6 +37,9 @@ public interface InsuranceList{
 
 	Collection<? extends String> getInsuranceNameById(String insurance);
 
-	List<Insurance> getInsuranceFromId(List<Contract> contracts, InsuranceList insuranceList);
+	String getInsuranceIdbyName(String string);
+
+
+
 
 }

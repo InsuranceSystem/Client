@@ -8,22 +8,18 @@ import Interface.Customer.EGender;
 import Interface.FamilyHistory;
 import Interface.Insurance;
 import Interface.Terms;
-import Interface.CC_ServerIF;
 import Interface.CarAccident;
 import Interface.CarAccidentList;
 import Interface.CompensationClaim;
 import Interface.CompensationClaimList;
 import Interface.ContractList;
-import Interface.Contract_ServerIF;
 import Interface.CounselApplicationList;
 import Interface.CounselList;
 import Interface.CustomerList;
-import Interface.Customer_ServerIF;
 import Interface.FamilyHistoryList;
 import Interface.GuaranteeList;
 import Interface.InsuranceApplicationList;
 import Interface.InsuranceList;
-import Interface.Insurance_ServerIF;
 import Interface.PaymentList;
 import Interface.Survey;
 import Interface.SurveyList;
@@ -35,7 +31,6 @@ import Interface.InsuranceApplication;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.ParseException;
@@ -56,34 +51,69 @@ import java.util.Map;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		 Registry registry_ccserver = LocateRegistry.getRegistry("localhost", 1300);
-		 Registry registry_insuranceserver = LocateRegistry.getRegistry("localhost", 1400);
-		 Registry registry_customerserver = LocateRegistry.getRegistry("localhost", 1500);
-		 Registry registry_contractserver = LocateRegistry.getRegistry("localhost", 1600);
-		 
-		CC_ServerIF ccserver = (CC_ServerIF) registry_ccserver.lookup("CompensationClaim_Server");
-		System.out.println("CompensationClaim_Server is ready");
-		Insurance_ServerIF Insuranceserver = (Insurance_ServerIF) registry_insuranceserver.lookup("InsuranceServer");
-		System.out.println("InsuranceServer is ready");
-		Contract_ServerIF contractserver = (Contract_ServerIF) registry_contractserver.lookup("ContractServer");
-		Customer_ServerIF customerserver = (Customer_ServerIF) registry_customerserver.lookup("CustomerServer");
+		System.setProperty("java.security.policy", "policy.txt");
+		System.setSecurityManager(null);
+		Registry registry = LocateRegistry.getRegistry("localhost", 1300);
+		CarAccidentList carAccidentList = (CarAccidentList) registry.lookup("CarAccidentList");
+	        
+	      Registry registry2 = LocateRegistry.getRegistry("localhost", 1301);
+	      SurveyList surveyList = (SurveyList) registry2.lookup("SurveyList");
+	        // surveyList 객체 사용
+	        
+	        // CompensationClaimList 객체 찾아오기
+	      Registry registry3 = LocateRegistry.getRegistry("localhost", 1302);
+	      CompensationClaimList compensationClaimList = (CompensationClaimList) registry3.lookup("CompensationClaimList");
+	      
+	      Registry registry4 = LocateRegistry.getRegistry("localhost", 1303);
+	      PaymentList paymentListImpl =  (PaymentList) registry4.lookup("PaymentList");
+	   
+		
+	      Registry registry5 = LocateRegistry.getRegistry("localhost", 1304);
+	      ContractList contractListImpl = (ContractList) registry5.lookup("ContractList");  
+	        
+	        // surveyList 객체 사용
+	        
+	        // CompensationClaimList 객체 찾아오기
+	      Registry registry6 = LocateRegistry.getRegistry("localhost", 1305);
+	      CustomerList customerListImpl = (CustomerList) registry6.lookup("CustomerList");
 
-		CompensationClaimList compensationClaimList = 	ccserver.getCompensationClaimList();
-		SurveyList surveyList = ccserver.getSurveyList();
-		CarAccidentList carAccidentList = ccserver.getCarAccidentList();
-		InsuranceApplicationList insuranceApplicationList = Insuranceserver.getInsuranceApplicationList();
+	      
+	      Registry registry7 = LocateRegistry.getRegistry("localhost", 1306);
+	      FamilyHistoryList familyHistoryListImpl =  (FamilyHistoryList) registry7.lookup("FamilyHistoryList");
+	   
 		
-		InsuranceList insuranceList = Insuranceserver.getInsuranceList();
-		GuaranteeList guaranteeList = Insuranceserver.getGuaranteeList();
+	      Registry registry8 = LocateRegistry.getRegistry("localhost", 1307);
+	      CounselList counselListImpl = (CounselList) registry8.lookup("CounselList");  
+	        
+	        // surveyList 객체 사용
+	        
+	        // CompensationClaimList 객체 찾아오기
+	      Registry registry9 = LocateRegistry.getRegistry("localhost", 1308);
+	      CounselApplicationList counselApplicationListImpl = (CounselApplicationList) registry9.lookup("CounselApplicationList");
+
+	      
+	      
+	        // CompensationClaimList 객체 찾아오기
+		      Registry registry10 = LocateRegistry.getRegistry("localhost", 1309);
+		      TermsList termsListImpl = (TermsList) registry10.lookup("TermsList");
+
+		      
+		      Registry registry11 = LocateRegistry.getRegistry("localhost", 1310);
+		      GuaranteeList guaranteeList =  (GuaranteeList) registry11.lookup("GuaranteeList");
+		   
+			
+		      Registry registry12 = LocateRegistry.getRegistry("localhost", 1311);
+		      InsuranceList insuranceList = (InsuranceList) registry12.lookup("InsuranceList");  
+		        
+		        // surveyList 객체 사용
+		        
+		        // CompensationClaimList 객체 찾아오기
+		      Registry registry13 = LocateRegistry.getRegistry("localhost", 1312);
+		      InsuranceApplicationList insuranceApplicationList =  (InsuranceApplicationList) registry13.lookup("InsuranceApplicationList");
+      
+	  
 		
-		TermsList termsListImpl = Insuranceserver.getTermsList();
 		
-		ContractList contractListImpl = contractserver.getContractList();
-		CounselList counselListImpl = customerserver.getCounselList();
-		CounselApplicationList counselApplicationListImpl = customerserver.getCounselApplicationList();
-		CustomerList customerListImpl = customerserver.getCustomerList();
-		FamilyHistoryList familyHistoryListImpl = customerserver.getFamilyHistoryList();	
-		PaymentList paymentListImpl = contractserver.getPaymentList();
 		
 		
 		String userChoice = "";
@@ -269,7 +299,8 @@ public class Main {
 				System.out.println("일치하는 data가 하나도 없습니다.");
 				return;
 			}
-			customer = customerList.getCustomerFromCouncels(counsel.getCustomerID());
+			//이부분 에러나요..ㅠㅠ
+		//	customer = customerList.getCustomerFromCouncels(counsel.getCustomerID());
 			showCounselSchedule(counselApplication, customer, counsel);
 			if (!getCustomerDetails(inputReader))
 				return;

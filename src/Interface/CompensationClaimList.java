@@ -1,16 +1,20 @@
 package Interface;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 
-public interface CompensationClaimList {
 
-	boolean createCompensationClaim(CompensationClaim compensationClaim) throws Exception;
 
-	ArrayList<CompensationClaim> retrieve();
+public interface CompensationClaimList extends Remote{
 
-	boolean update();
+	boolean createCompensationClaim(CompensationClaim compensationClaim) throws Exception, RemoteException;
 
-	CompensationClaim getCompensationClaimbyID(String ccid);
+	ArrayList<CompensationClaim> retrieve() throws RemoteException;
+
+	boolean update() throws RemoteException;
+
+	CompensationClaim getCompensationClaimbyID(String ccid) throws RemoteException;
 
 }

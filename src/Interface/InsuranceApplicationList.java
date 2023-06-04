@@ -1,19 +1,22 @@
 package Interface;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-public interface InsuranceApplicationList {
 
-	boolean createInsuranceApplication(InsuranceApplication insuranceApplication) throws Exception ;
+public interface InsuranceApplicationList extends Remote{
 
-	boolean delete(String applicationId) throws Exception ;
+	boolean createInsuranceApplication(InsuranceApplication insuranceApplication) throws Exception, RemoteException;
 
-	ArrayList<InsuranceApplication> retrieve();
+	boolean delete(String applicationId) throws Exception,RemoteException;;
 
-	boolean update();
+	ArrayList<InsuranceApplication> retrieve()throws RemoteException;
 
-	InsuranceApplication getApplicationbyId(String input);
+	boolean update()throws RemoteException;
 
-	void updateInsuranceApplication(InsuranceApplication insuranceApplication);
+	InsuranceApplication getApplicationbyId(String trim) throws RemoteException;
+
+	boolean updateInsuranceApplication(InsuranceApplication insuranceApplication) throws RemoteException;
 
 }

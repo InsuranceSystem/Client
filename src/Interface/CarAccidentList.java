@@ -1,18 +1,21 @@
 package Interface;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 
-public interface CarAccidentList {
 
-	boolean add();
+public interface CarAccidentList extends Remote{
 
-	boolean delete();
+	boolean add() throws RemoteException;
 
-	ArrayList<CarAccident> retrieve();
+	boolean delete() throws RemoteException;
 
-	boolean update();
+	ArrayList<CarAccident> retrieve() throws RemoteException;
 
-	boolean createCarAccident(CarAccident carAccident);
+	boolean update() throws RemoteException;
+
+	boolean createCarAccident(CarAccident carAccident) throws Exception, RemoteException;
 
 }

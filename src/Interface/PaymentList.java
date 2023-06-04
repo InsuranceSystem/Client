@@ -1,32 +1,32 @@
 package Interface;
 
 import java.io.IOException;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
 
-public interface PaymentList {
+public interface PaymentList extends Remote{
 
-	boolean add(String paymentInfo) throws ParseException, IOException ;
 
-	ArrayList<Payment> retrieve() throws Exception ;
 
-	boolean updateCancellation(String customerId, String insuranceId) throws IOException ;
+	public boolean add(String paymentInfo) throws ParseException, IOException, RemoteException;
 
-	ArrayList<String> retreiveUnpaidCustomerId();
+	public boolean delete() throws RemoteException;
 
-	ArrayList<Payment> retreiveCustomerPayment(String selectedCustomerId);
+	public ArrayList<Payment> retrieve() throws Exception , RemoteException;
 
-	ArrayList<String> retreiveDateStatusById(String selectedCustomerId, String selectedInsuranceId);
+	public boolean update(Payment updatedPayment) throws IOException , RemoteException;
 
-	void update();
+	public ArrayList<Payment> retreiveCustomerInsurancePayment(String customerId, String selectedInsuranceId) throws RemoteException;
 
-	ArrayList<Payment> retreiveCustomerInsurancePayment(String customerId, String selectedInsuranceId);
+	public ArrayList<Payment> retreiveCustomerPayment(String selectedCustomerId) throws RemoteException;
 
-	boolean updateWhetherPayment(String selectedCustomerId, String selectedInsuranceId);
+	public ArrayList<String> retreiveUnpaidCustomerId() throws RemoteException;
 
-	void update(Payment payment);
-	
+	public ArrayList<String> retreiveDateStatusById(String selectedCustomerId, String selectedInsuranceId) throws RemoteException;
 
+	public boolean updateWhetherPayment(String selectedCustomerId, String selectedInsuranceId) throws RemoteException;
 
 }

@@ -1,14 +1,17 @@
 package Interface;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 
-public interface SurveyList {
 
-	boolean createSurvey(Survey survey) throws Exception;
+public interface SurveyList extends Remote{
 
-    public ArrayList<Survey> retrieve();
+	boolean createSurvey(Survey survey) throws Exception,RemoteException;
 
-    boolean update(Survey updateSurvey) throws Exception;
+    public ArrayList<Survey> retrieve() throws RemoteException;
+
+    boolean update(Survey updateSurvey) throws Exception ,RemoteException;
 
 }

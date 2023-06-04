@@ -1,15 +1,16 @@
 package Interface;
 
-
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 
 
-public interface CounselApplicationList {
+public interface CounselApplicationList extends Remote{
 
-	public boolean add(CounselApplication counselApplication)throws Exception;
-	public boolean delete(String counselID);
-	public boolean update(CounselApplication counselApplication, String counselID);
-	public ArrayList<CounselApplication> retrieve();
-	public CounselApplication getCounselApplicationById(String id);
+	public boolean add(CounselApplication counselApplication)throws Exception, RemoteException;
+	public boolean delete(String counselID) throws RemoteException;
+	public boolean update(CounselApplication counselApplication, String counselID)throws RemoteException;
+	public ArrayList<CounselApplication> retrieve()throws RemoteException;
+	public CounselApplication getCounselApplicationById(String id) throws RemoteException;
 }

@@ -1085,7 +1085,7 @@ public class Main {
 		String insuranceID = inputReader.readLine().trim();
 		if (!insuranceID.equals("x") && !insuranceID.equals(null)) {
 			String insuranceName = insuranceListImpl.requestAuthorization(insuranceID);
-			if (!insuranceName.equals(null)) System.out.println(insuranceName + "인가 신청이 완료되었습니다. 인가 완료까지 수 일이 소요될 수 있습니다.");
+			if (!insuranceName.equals(null)) System.out.println("보험명 : " + insuranceName + "의 인가 신청이 완료되었습니다. 인가 완료까지 수 일이 소요될 수 있습니다.");
 			else System.out.println("신청에 실패했습니다."); 
 			break;} 
 		else if (insuranceID.equals("x")) { System.out.println("이전화면으로 돌아갑니다."); break;}

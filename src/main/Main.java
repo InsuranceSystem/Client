@@ -139,8 +139,8 @@ public class Main {
 						inputReader, insuranceApplicationList);
 				break;
 			case "5":
-//				showCustomerList(customerListImpl, inputReader, familyHistoryListImpl, contractListImpl, insuranceList,
-//						paymentListImpl, compensationClaimList);
+				showCustomerList(customerListImpl, inputReader, familyHistoryListImpl, contractListImpl, insuranceList,
+						paymentListImpl, compensationClaimList);
 				break;
 			case "6":
 				showCouncel(inputReader, counselApplicationListImpl);
@@ -516,8 +516,10 @@ public class Main {
 		System.out.println("---------------상담 신청----------------");
 		//category, counselID,customerID, dateOfFirst,dateOfSecond,requirement
 		CounselApplication counselApplication = new CounselApplication();
+		Counsel counsel = new Counsel();
 		String customerId = null;
-		String dateStr = null;
+		String dateStr1 = null;
+		String dateStr2 = null;
 		String category = null;
 		String requirement = null;
 		do {
@@ -529,26 +531,25 @@ public class Main {
 
 		do {
 			System.out.print("1지망 일시 : ");
-			dateStr = inputReader.readLine().trim();
-			if (dateStr.length() == 0)
+			dateStr1 = inputReader.readLine().trim();
+			if (dateStr1.length() == 0)
 				System.out.println("입력하지 않은 항목이 있습니다. 모든 항목을 입력해주세요.");
-		} while (dateStr.length() == 0);
+		} while (dateStr1.length() == 0);
 
-		int year = Integer.parseInt(dateStr.substring(0, 4));
-		int month = Integer.parseInt(dateStr.substring(4, 6));
-		int day = Integer.parseInt(dateStr.substring(6, 8));
-		LocalDate date1 = LocalDate.of(year, month, day);
-
+		int year = Integer.parseInt(dateStr1.substring(0, 4));
+		int month = Integer.parseInt(dateStr1.substring(4, 6));
+		int day = Integer.parseInt(dateStr1.substring(6, 8));
+                LocalDate date1 = LocalDate.of(year, month, day);
 		do {
 			System.out.print("2지망 일시 : ");
-			dateStr = inputReader.readLine().trim();
-			if (dateStr.length() == 0)
+			dateStr2 = inputReader.readLine().trim();
+			if (dateStr2.length() == 0)
 				System.out.println("입력하지 않은 항목이 있습니다. 모든 항목을 입력해주세요.");
-		} while (dateStr.length() == 0);
+		} while (dateStr2.length() == 0);
 
-		year = Integer.parseInt(dateStr.substring(0, 4));
-		month = Integer.parseInt(dateStr.substring(4, 6));
-		day = Integer.parseInt(dateStr.substring(6, 8));
+		year = Integer.parseInt(dateStr2.substring(0, 4));
+		month = Integer.parseInt(dateStr2.substring(4, 6));
+		day = Integer.parseInt(dateStr2.substring(6, 8));
 		LocalDate date2 = LocalDate.of(year, month, day);
 
 		do {
@@ -569,10 +570,13 @@ public class Main {
 		counselApplication.setDateOfSecond(date2);
 		counselApplication.setCategory(category);
 		counselApplication.setRequirement(requirement);
+			counsel.setCustomerID(customerId);
+		counsel.setRequirement(requirement);
 		System.out.println("제출하겠습니까? (Y/N)");
 		String save = inputReader.readLine().trim();
 		if (save.equals("Y") || save.equals("y")) {
-			if (counselApplicationList.add(counselApplication)) System.out.println("저장되었습니다.");
+			boolean isAddedCounselApp = counselApplicationList.add(counselApplication);
+			if (isAddedCounselApp) System.out.println("저장되었습니다.");
 			else System.out.println("저장되지 않았습니다.");	
 		}
 	}
@@ -713,49 +717,49 @@ public class Main {
 		return customerListImpl.retrieveCustomerFromResurrect(id);
 	}
 
-//	private static void showCustomerList(CustomerList customerListImpl, BufferedReader inputReader,
-//			FamilyHistoryList familyHistoryListImpl, ContractList contractListImpl,
-//			InsuranceList insuranceList, PaymentList paymentListImpl,
-//			CompensationClaimList compensationClaimList) throws Exception {
-//		// TODO Auto-generated method stub
-//		System.out.println("고객 조회 메뉴입니다.");
-//		System.out.println("1. 고객 정보 조회");
-//		System.out.println("2. 계약 유지 대상자 조회");
-//		String userChoice = "";
-//		userChoice = inputReader.readLine().trim();
-//		switch (userChoice) {
-//		case "1":
-//			System.out.println("[고객 정보 조회]");
-//			do {
-//				userChoice = inputCustomerId(inputReader); // 아이디 받아옴
-//				if (userChoice.equals(""))
-//					System.out.println("조건을 기입했는지 체크해주세요.");
-//			} while (userChoice.equals(""));
-//			String id = userChoice;
-//			Customer customer = customerListImpl.retrieveCustomer(id); // 아이디에 따른 고객정보 받아옴
-//			if (customer == null) {
-//				System.out.println("조건에 맞는 고객 정보가 하나도 없습니다.\n조건을 확인해주세요.");
-//				return;
-//			}
-//			showCustomerInfo(customer); // id 이름 생일 성별
-//			boolean isRetrieveDetail = getCustomerDetails(inputReader); // 세부정보 읽을지 확인
-//			if (isRetrieveDetail)
-//				showCustomerDetailInfos(customer, familyHistoryListImpl, contractListImpl, insuranceList); // 고객 세부정보 출력
-//			else
-//				return;
-//			if (inputDelOrUpd(inputReader)) {
-//				customerListImpl.delete(id); // 삭제 or 업뎃 여부 입력 후 해당 고객 삭제
-//				System.out.println("고객 정보가 삭제되었습니다.");
-//			} else
-//				customerListImpl.update(getUpdatedCustomer(inputReader), id); // 고객 정보 입력 받아서 해당 고객 업데이트
-//			break;
-//		case "2":
-//			System.out.println("[계약 유지 대상자 조회]");
+	private static void showCustomerList(CustomerList customerListImpl, BufferedReader inputReader,
+			FamilyHistoryList familyHistoryListImpl, ContractList contractListImpl,
+			InsuranceList insuranceList, PaymentList paymentListImpl,
+			CompensationClaimList compensationClaimList) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("고객 조회 메뉴입니다.");
+		System.out.println("1. 고객 정보 조회");
+		System.out.println("2. 계약 유지 대상자 조회");
+		String userChoice = "";
+		userChoice = inputReader.readLine().trim();
+		switch (userChoice) {
+		case "1":
+			System.out.println("[고객 정보 조회]");
+			do {
+				userChoice = inputCustomerId(inputReader); // 아이디 받아옴
+				if (userChoice.equals(""))
+					System.out.println("조건을 기입했는지 체크해주세요.");
+			} while (userChoice.equals(""));
+			String id = userChoice;
+			Customer customer = customerListImpl.retrieveCustomer(id); // 아이디에 따른 고객정보 받아옴
+			if (customer == null) {
+				System.out.println("조건에 맞는 고객 정보가 하나도 없습니다.\n조건을 확인해주세요.");
+				return;
+			}
+			showCustomerInfo(customer); // id 이름 생일 성별
+			boolean isRetrieveDetail = getCustomerDetails(inputReader); // 세부정보 읽을지 확인
+			if (isRetrieveDetail)
+				showCustomerDetailInfos(customer, familyHistoryListImpl, contractListImpl, insuranceList); // 고객 세부정보 출력
+			else
+				return;
+			if (inputDelOrUpd(inputReader)) {
+				customerListImpl.delete(id); // 삭제 or 업뎃 여부 입력 후 해당 고객 삭제
+				System.out.println("고객 정보가 삭제되었습니다.");
+			} else
+				customerListImpl.update(getUpdatedCustomer(inputReader), id); // 고객 정보 입력 받아서 해당 고객 업데이트
+			break;
+		case "2":
+			System.out.println("[계약 유지 대상자 조회]");
 //			showfMaturityList(inputReader, contractListImpl, customerListImpl, familyHistoryListImpl, insuranceList,
 //					paymentListImpl, compensationClaimList);
-//			break;
-//		}
-//	}
+			break;
+        	}
+	}
 
 	private static boolean inputDelOrUpd(BufferedReader inputReader) throws IOException { // 세부정보 삭제(T) or 업뎃(F) 입력
 		System.out.println("문구를 선택해 주세요");

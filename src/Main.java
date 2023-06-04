@@ -1239,14 +1239,13 @@ public class Main {
 			System.out.println("수정/삭제할 설계서의 보험 ID를 입력하세요. 없으면 x를 입력하세요");
 			String insuranceID = "";
 			Insurance insurance;
-			System.out.println("보험 ID : ");
-			System.out.println("================================================================");
+			System.out.print("보험 ID : ");
 			insuranceID = inputReader.readLine().trim();
 			if(!insuranceListImpl.isExistInsuranceDesign(insuranceID)) {System.out.println("존재하지 않는 보험 설계서입니다."); break;}
 			if (!insuranceID.equals("x")) {
 				insurance = insuranceListImpl.retrieveInsuranceDetail(insuranceID);
-				System.out.println(insurance.toStringDesignInsurance());
 				System.out.println("1. 수정, 2. 삭제");
+				System.out.print("선택 : ");
 				String choice = inputReader.readLine().trim();
 				if (choice.equals("1")) updateInsurance(insurance, guaranteeList, termsList, insuranceListImpl, inputReader);
 				else if (choice.equals("2")) deleteInsurance(insuranceListImpl, insurance.getInsuranceID(), inputReader);
@@ -1288,9 +1287,9 @@ public class Main {
 			else System.out.println("숫자로 입력해주세요");
 		}
 		System.out.println("요율 : "); insurance.setRate(inputReader.readLine().trim());
-		System.out.println("배당 여부(False/True) : "); insurance.setDistributionStatus(Boolean.parseBoolean(inputReader.readLine().trim()));
+		System.out.println("배당 여부 : "); insurance.setDistributionStatus(Boolean.parseBoolean(inputReader.readLine().trim()));
 		while (true) {
-			System.out.println("보장 내용(약관ID, 콤마로 구분해주세요) : ");
+			System.out.println("보장 내용(약관ID) : ");
 			String TermsList = inputReader.readLine().trim();
 			String[] termsIDListSplit = TermsList.split(",");
 			boolean result = true;
@@ -1319,6 +1318,7 @@ public class Main {
 
 	private static void updateInsurance(Insurance insurance, GuaranteeList guaranteeList, TermsList termsListImpl, InsuranceList insuranceListImpl, BufferedReader inputReader) throws Exception {
 		String choice = "";
+		System.out.println("==========================================");
 		System.out.println("수정할 정보의 번호를 선택하고 내용을 입력하세요.");
 		System.out.println("1. 보험 이름 : "+insurance.getInsuranceName());
 		System.out.println("2. 보험 종류 : "+insurance.getType()); 

@@ -299,8 +299,8 @@ public class Main {
 				System.out.println("일치하는 data가 하나도 없습니다.");
 				return;
 			}
-		//	이부분 에러나요ㅠㅠ
-		//	customer = customerList.getCustomerFromCouncels(counsel.getCustomerID());
+
+			customer = customerList.getCustomerByID(counsel.getCustomerID());
 			showCounselSchedule(counselApplication, customer, counsel);
 			if (!getCustomerDetails(inputReader))
 				return;
@@ -1336,8 +1336,7 @@ public class Main {
 		case ("10"): insurance.setRate(content); break;
 		case ("11"): insurance.setDistributionStatus(Boolean.parseBoolean(content)); break;
 		case ("12"): 
-			String TermsList = inputReader.readLine().trim();
-			String[] termsIDListSplit = TermsList.split(",");
+			String[] termsIDListSplit = content.split(",");
 			boolean result = true;
 			for (int i = 0; i < termsIDListSplit.length; i++) {
 			if (termsListImpl.isExistTermsID(termsIDListSplit[i]) == false) 

@@ -25,7 +25,5 @@ public interface CustomerList extends Remote{
 	public String getCustomerIdFromNameAndPH(String customerName, String customerPH)throws RemoteException;
 //	public void deleteUnpaidCustomer(Customer retrieveCustomer);
 //	public List<Contract> getContractFromCustomerId(String customerID, ContractList contractListImpl);
-//	public Customer getCustomerFromCouncels(String customerId);
-
-
+	
 }

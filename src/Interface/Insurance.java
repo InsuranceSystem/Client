@@ -2,8 +2,10 @@ package Interface;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 
-public class Insurance {
+public class Insurance implements Serializable {
+    private static final long serialVersionUID = 1L;
 
 
 	private String insuranceID;	
@@ -24,6 +26,7 @@ public class Insurance {
 	private boolean authorization; // 인가여부
 
 	public Insurance() throws FileNotFoundException, IOException {  
+		
 		basicPremium = 0;
 		maxCompensation = 0;
 		authorization = false;

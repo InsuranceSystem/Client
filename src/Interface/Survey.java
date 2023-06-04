@@ -1,8 +1,10 @@
 package Interface;
 
 import java.io.BufferedReader;
+import java.io.Serializable;
 
-public class Survey {
+public class Survey implements Serializable {
+    private static final long serialVersionUID = 1L;
 	private String CCID;
 	private String managerName;
 	private String reportFilePath;

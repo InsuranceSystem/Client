@@ -1,8 +1,10 @@
 package Interface;
 
+import java.io.Serializable;
 import java.util.StringTokenizer;
 
-public class FamilyHistory {
+public class FamilyHistory implements Serializable {
+    private static final long serialVersionUID = 1L;
 
 	private String customerID;
 	private String diseaseName; // 가족 질환

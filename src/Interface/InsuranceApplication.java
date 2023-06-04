@@ -1,10 +1,12 @@
 package Interface;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 
-public class InsuranceApplication {
+public class InsuranceApplication implements Serializable {
+    private static final long serialVersionUID = 1L;
 
 	private String applicationID;
 	private String insuranceID;

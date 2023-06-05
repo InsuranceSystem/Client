@@ -126,7 +126,7 @@ public class Main {
 						customerListImpl, inputReader);
 				break;
 			case "2":
-				retrieveCompensationClaim(insuranceList, compensationClaimList, surveyList, inputReader);
+				retrieveCompensationClaim(insuranceList, compensationClaimList, carAccidentList, surveyList, inputReader);
 				break;
 			case "3":
 				showOnSaleInsurance(insuranceList, insuranceApplicationList, customerListImpl, familyHistoryListImpl,
@@ -904,7 +904,7 @@ public class Main {
 	}
 
 	private static void retrieveCompensationClaim(InsuranceList insuranceList,
-			CompensationClaimList compensationClaimList, SurveyList surveyList, BufferedReader inputReader)
+			CompensationClaimList compensationClaimList, CarAccidentList carAccidentList, SurveyList surveyList, BufferedReader inputReader)
 			throws Exception {
 		System.out.println("****************** Compensation Claim List *******************");
 		System.out.println("청구ID 보험ID 고객ID 접수자명 접수자전화번호 보험계약자와의 관계 구비서류파일경로 은행 계좌번호 예금주명");
@@ -914,13 +914,12 @@ public class Main {
 		userChoice = inputReader.readLine().trim();
 		switch (userChoice) {
 		case "1":
-			createSurvey(compensationClaimList, surveyList, insuranceList, inputReader);
+			createSurvey(compensationClaimList, carAccidentList, surveyList, insuranceList, inputReader);
 			break;
-
 		}
 	}
 
-	private static void createSurvey(CompensationClaimList compensationClaimList, SurveyList surveyList,
+	private static void createSurvey(CompensationClaimList compensationClaimList, CarAccidentList carAccidentList, SurveyList surveyList,
 			InsuranceList insuranceList, BufferedReader inputReader) throws Exception {
 		Survey survey = new Survey();
 		System.out.println("****************** Survey *******************");
@@ -942,24 +941,28 @@ public class Main {
 		if (surveyList.createSurvey(survey)) {
 			System.out.println("수정이 완료되었습니다.");
 			System.out.println("결정보험금(" + survey.getDecisionMoney() + "원)을 지급요청하려면 Y를 누르십시오");
-			if (inputReader.readLine().trim().equals("Y"))
+			if (inputReader.readLine().trim().equals("Y")){
 				System.out.println(
 						compensationClaim.getReceptionistName() + " " + compensationClaim.getReceptionistPNumber() + " "
 								+ insuranceList.getInsurancebyId(compensationClaim.getInsuranceID()).getInsuranceName()
 								+ " " + compensationClaim.getBank() + " " + compensationClaim.getAccountHolderName()
 								+ " " + survey.getDecisionMoney());
-			requestBanking(survey, insuranceList, inputReader);
+				if(requestBanking()){
+					compensationClaimList.delete(compensationClaim.getCCID());
+					if(insuranceList.getInsurancebyId(compensationClaim.getInsuranceID()).getType() == "Car"){
+						CarAccident carAccident = carAccidentList.getCarAccidentByID(compensationClaim.getCCID());
+						carAccidentList.delete(carAccident.getCCID());
+					}
+				}
+			}
 		} else
 			System.out.println("신청에 실패하였습니다. 다시 시도해주십시오.");
 	}
 
-	private static void requestBanking(Survey survey, InsuranceList insuranceList, BufferedReader inputReader)
+	private static boolean requestBanking()
 			throws IOException {
-		// 보험사 시스템은 결정보험금 지급 내용(접수자명, 접수자 전화번호, 보험명, 은행, 계좌번호, 예금주명, 결정보험금액)과 이체 요청 메시지를
-		// 은행에 전달한다.
 		System.out.println("이체 요청을 완료했습니다. 보험금이 입금되기까지는 수일이 소요될 수 있습니다.");
-		// 보상처리팀 직원은 접수자의 전화번호로 ‘보험금 이체 신청이 완료되었습니다. 보험금이 입금되기까지는 수일이 소요될 수 있습니다.’ 라는
-		// 메시지를 보낸다
+		return true;
 	}
 
 	private static CarAccident createCarAccident(CompensationClaim compensationClaim, BufferedReader inputReader)
@@ -1679,7 +1682,7 @@ public class Main {
 					if(!contractListImpl.updateCancellation(selectedCustomerId, selectedInsuranceId)) {
 						System.out.println("[System] 시스템 상 오류로 정상적으로 처리되지 않았습니다. 다시 시도해 주세요.");
 					} else {
-						requestBanking(null, null, systemInput);
+						requestBanking();
 					}
 			
 				} else if (agreement.equalsIgnoreCase("N")) {
@@ -1763,7 +1766,7 @@ public class Main {
 					if(!contractListImpl.updateCancellation(selectedCustomerId, selectedInsuranceId)) {
 						System.out.println("[System] 시스템 상 오류로 정상적으로 처리되지 않았습니다. 다시 시도해 주세요.");
 					} else {
-						requestBanking(null, null, systemInput);
+						requestBanking();
 					}
 			
 				} else if (agreement.equalsIgnoreCase("N")) {

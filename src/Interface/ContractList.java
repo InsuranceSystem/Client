@@ -15,13 +15,13 @@ public interface ContractList extends Remote{
 
 	ArrayList<Contract> retrieve() throws Exception ,RemoteException;
 
-	boolean updateCancellation(String customerId, String insuranceId) throws IOException ,RemoteException;
+	boolean updateCancellation(String customerId, String insuranceId) throws IOException, RemoteException;
 
-//
-//	void setResurrectFromCustomer(Customer customer);
-//
-//
-//	void setMaturityFromCustomer(Customer customer);
+
+	void setResurrectFromCustomer(String customerID) throws RemoteException;
+
+
+	void setMaturityFromCustomer(String customerID) throws RemoteException;
 //	
 //	void setWheaterPaymentFromCustomer(Customer customer);
 

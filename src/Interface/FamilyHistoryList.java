@@ -18,9 +18,8 @@ public interface FamilyHistoryList extends Remote{
 
 	public ArrayList<FamilyHistory> getFamilyHistoryByCID(String customerID)throws RemoteException;
 
-	public FamilyHistory getFamilyHistoryFromId(String customerID, FamilyHistoryList familyHistoryListImpl)throws RemoteException;
+	public FamilyHistory getFamilyHistoryFromId(String customerID)throws RemoteException;
 
-	public ArrayList<FamilyHistory> getAllFamilyHistoryFromId(String selectedCustomerId,
-			FamilyHistoryList familyHistoryListImpl)throws RemoteException;
+	public ArrayList<FamilyHistory> getAllFamilyHistoryFromId(String selectedCustomerId) throws RemoteException;
 
 }

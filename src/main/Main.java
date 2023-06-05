@@ -1,39 +1,8 @@
 package main;
 
-import Interface.CompensationClaim.*;
-import Interface.Contract;
-import Interface.Payment;
-import Interface.Counsel;
-import Interface.CounselApplication;
-import Interface.Customer;
-import Interface.Customer.EGender;
-import Interface.FamilyHistory;
-import Interface.Insurance;
-import Interface.Terms;
-import Interface.CarAccident;
-import Interface.CarAccidentList;
-import Interface.CompensationClaim;
-import Interface.CompensationClaimList;
-import Interface.ContractList;
-import Interface.CounselApplicationList;
-import Interface.CounselList;
-import Interface.CustomerList;
-import Interface.FamilyHistoryList;
-import Interface.GuaranteeList;
-import Interface.InsuranceApplicationList;
-import Interface.InsuranceList;
-import Interface.PaymentList;
-import Interface.Survey;
-import Interface.SurveyList;
-import Interface.TermsList;
-import main.TargetType;
-import Interface.Guarantee;
-import Interface.InsuranceApplication;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.ParseException;
@@ -50,6 +19,34 @@ import java.util.List;
 //import java.rmi.RemoteException;
 import java.util.Map;
 
+import Interface.CarAccident;
+import Interface.CarAccidentList;
+import Interface.CompensationClaim;
+import Interface.CompensationClaimList;
+import Interface.Contract;
+import Interface.ContractList;
+import Interface.Counsel;
+import Interface.CounselApplication;
+import Interface.CounselApplicationList;
+import Interface.CounselList;
+import Interface.Customer;
+import Interface.Customer.EGender;
+import Interface.CustomerList;
+import Interface.FamilyHistory;
+import Interface.FamilyHistoryList;
+import Interface.Guarantee;
+import Interface.GuaranteeList;
+import Interface.Insurance;
+import Interface.InsuranceApplication;
+import Interface.InsuranceApplicationList;
+import Interface.InsuranceList;
+import Interface.Payment;
+import Interface.PaymentList;
+import Interface.Survey;
+import Interface.SurveyList;
+import Interface.Terms;
+import Interface.TermsList;
+
 
 public class Main {
 
@@ -65,6 +62,7 @@ public class Main {
 		      Registry registry3 = LocateRegistry.getRegistry("localhost", 1302);
 		      CompensationClaimList compensationClaimList = (CompensationClaimList) registry3.lookup("CompensationClaimList");
 		      
+		      // contract 서버 두 개
 		      Registry registry4 = LocateRegistry.getRegistry("localhost", 1303);
 		      PaymentList paymentListImpl =  (PaymentList) registry4.lookup("PaymentList");
 		   
@@ -581,70 +579,55 @@ public class Main {
 		}
 	}
 
-//	private static void showfMaturityList(BufferedReader inputReader, ContractList contractListImpl,
-//			CustomerList customerListImpl, FamilyHistoryList familyHistoryListImpl,
-//			InsuranceList insuranceList, PaymentList paymentListImpl,
-//			CompensationClaimList compensationClaimList) throws Exception { // 만기계약 대상자 조회
-//		TargetType targetType = showKeepContract(inputReader); // 계약유지대상자 조회화면 출력 및 대상자 입력 - Enum 반환
-//		ArrayList<Customer> customerList = null;
-//
-//		if (targetType == TargetType.RESURRECT_CANDIDATES) { // 1. 부활 대상자
-//			customerList = customerListImpl.getResurrectCandidates(contractListImpl); // 부활 대상자들 받아옴
-//			showResurrectContracts(customerList); // 부활 대상자 출력
-//			boolean isShowDetail = getCustomerDetails(inputReader); // 세부정보 보기 출력
-//			if (!isShowDetail)
-//				return;
-//			Customer customer = getCustomerFromResurrect(customerListImpl, inputReader); // 부활 대상자에서 고객 조회
-//			if (customer == null) {
-//				System.out.println("입력하신 고객 정보가 없습니다.");
-//				return;
-//			}
-//			showCustomerDetailInfos(customer, familyHistoryListImpl, contractListImpl, insuranceList); // 고객 세부정보 출력
-//			// 리스트에서 지운다 -> 전체 계약 목록
-//			if (!selectCustomerDelete(inputReader))
-//				return;
-//			customerListImpl.deleteResurrectCandidatesCustomer(customer);
-//			contractListImpl.setResurrectFromCustomer(customer);
-//			System.out.println("대상자에서 제외되었습니다.");
-//		} else if (targetType == TargetType.EXPIRED_CONTRACTS) { // 2. 만기계약자
-//			customerList = customerListImpl.getExpiredContracts(contractListImpl); // 만기계약 대상자들 받아옴
-//			showExpiredContracts(customerList); // 만기계약 대상자 출력
-//			boolean isShowDetail = getCustomerDetails(inputReader); // 세부정보 보기 출력
-//			if (!isShowDetail)
-//				return;
-//			Customer customer = getCustomerFromExpired(customerListImpl, inputReader); // 만기계약 대상자에서 고객 조회
-//			if (customer == null) {
-//				System.out.println("입력하신 고객 정보가 없습니다.");
-//				return;
-//			}
-//			showCustomerDetailInfos(customer, familyHistoryListImpl, contractListImpl, insuranceList); // 고객 세부정보 출력
-//			// 리스트에서 지운다 -> 전체 계약 목록
-//			if (!selectCustomerDelete(inputReader))
-//				return;
-//			customerListImpl.deleteExpiredCustomer(customer);
-//			contractListImpl.setMaturityFromCustomer(customer);
-//			System.out.println("대상자에서 제외되었습니다.");
-//		} else if (targetType == TargetType.UNPAID_CUSTOMERS) { // 3. 보험료 미납자
-//			customerList = customerListImpl.getUnpaidContracts(contractListImpl); // 미납 대상자들 받아옴
-//			showUnPaidContracts(customerList); // 미납 대상자 출력
-//			boolean isShowDetail = getCustomerDetails(inputReader); // 세부정보 보기 출력
-//			if (!isShowDetail)
-//				return;
-//			Customer customer = getCustomerFromUnpaid(customerListImpl, inputReader); // 미납 대상자에서 고객 조회
-//			if (customer == null) {
-//				System.out.println("입력하신 고객 정보가 없습니다.");
-//				return;
-//			}
-//			showCustomerDetailInfos(customer, familyHistoryListImpl, contractListImpl, insuranceList); // 고객 세부정보 출력
-//			if (!selectCustomerDelete(inputReader))
-//				return;
-//			customerListImpl.deleteUnpaidCustomer(customer);
-//			contractListImpl.setWheaterPaymentFromCustomer(customer);
-//			System.out.println("대상자에서 제외되었습니다.");
-//			showUnpaidCustomer(inputReader, contractListImpl, customerListImpl, insuranceList, familyHistoryListImpl,
-//					paymentListImpl, compensationClaimList);
-//		}
-//	}
+	private static void showfMaturityList(BufferedReader inputReader, ContractList contractListImpl,
+			CustomerList customerList, FamilyHistoryList familyHistoryListImpl,
+			InsuranceList insuranceList, PaymentList paymentListImpl,
+			CompensationClaimList compensationClaimList) throws Exception { // 만기계약 대상자 조회
+		TargetType targetType = showKeepContract(inputReader); // 계약유지대상자 조회화면 출력 및 대상자 입력 - Enum 반환
+		ArrayList<Customer> customerLists = null;
+
+		if (targetType == TargetType.RESURRECT_CANDIDATES) { // 1. 부활 대상자
+			customerLists = customerList.getResurrectCandidates(true, contractListImpl.retrieve()); // 부활 대상자들 받아옴
+			showResurrectContracts(customerLists); // 부활 대상자 출력
+			boolean isShowDetail = getCustomerDetails(inputReader); // 세부정보 보기 출력
+			if (!isShowDetail)
+				return;
+			Customer customer = getCustomerFromResurrect(customerList, inputReader); // 부활 대상자에서 고객 조회
+			if (customer == null) {
+				System.out.println("입력하신 고객 정보가 없습니다.");
+				return;
+			}
+			showCustomerDetailInfos(customer, familyHistoryListImpl, contractListImpl, insuranceList); // 고객 세부정보 출력
+			// 리스트에서 지운다 -> 전체 계약 목록	
+			if (!selectCustomerDelete(inputReader))
+				return;
+			customerList.deleteResurrectCandidatesCustomer(customer); // resurrect배열에서 해당 고객 삭제
+			contractListImpl.setResurrectFromCustomer(customer.getCustomerID()); 
+			// contract 배열에서 해당 고객ID와 맞는 계약의 resurrect 번호를1->0
+			System.out.println("대상자에서 제외되었습니다.");
+		} else if (targetType == TargetType.EXPIRED_CONTRACTS) { // 2. 만기계약자
+			customerLists = customerList.getExpiredContracts(true, contractListImpl.retrieve()); // 만기계약 대상자들 받아옴
+			showExpiredContracts(customerLists); // 만기계약 대상자 출력
+			boolean isShowDetail = getCustomerDetails(inputReader); // 세부정보 보기 출력
+			if (!isShowDetail)
+				return;
+			Customer customer = getCustomerFromExpired(customerList, inputReader); // 만기계약 대상자에서 고객 조회
+			if (customer == null) {
+				System.out.println("입력하신 고객 정보가 없습니다.");
+				return;
+			}
+			showCustomerDetailInfos(customer, familyHistoryListImpl, contractListImpl, insuranceList); // 고객 세부정보 출력
+			// 리스트에서 지운다 -> 전체 계약 목록
+			if (!selectCustomerDelete(inputReader))
+				return;
+			customerList.deleteExpiredCustomer(customer);
+			contractListImpl.setMaturityFromCustomer(customer.getCustomerID());
+			System.out.println("대상자에서 제외되었습니다.");
+		} else if (targetType == TargetType.UNPAID_CUSTOMERS) {
+			showUnpaidCustomer(inputReader, contractListImpl, customerList, insuranceList, familyHistoryListImpl,
+					paymentListImpl, compensationClaimList);
+		}
+	}
 
 	private static boolean selectCustomerDelete(BufferedReader inputReader) throws IOException {
 		System.out.println("해당 대상자를 지우겠습니까?");
@@ -755,8 +738,8 @@ public class Main {
 			break;
 		case "2":
 			System.out.println("[계약 유지 대상자 조회]");
-//			showfMaturityList(inputReader, contractListImpl, customerListImpl, familyHistoryListImpl, insuranceList,
-//					paymentListImpl, compensationClaimList);
+			showfMaturityList(inputReader, contractListImpl, customerListImpl, familyHistoryListImpl, insuranceList,
+				paymentListImpl, compensationClaimList);
 			break;
         	}
 	}
@@ -794,7 +777,7 @@ public class Main {
 		showCustomerInfo(customer); // 고객 ID, 이름, 생일, 성별
 		showCustomerInfoDetail(customer); // 전번 주소 직업
 		showFamilyHistory(
-				familyHistoryListImpl.getFamilyHistoryFromId(customer.getCustomerID(), familyHistoryListImpl));
+				familyHistoryListImpl.getFamilyHistoryFromId(customer.getCustomerID()));
 		// 가족력 리스트(질환명,가족관계)
 		
 		List<Contract> selectedContracts = new ArrayList<Contract>();
@@ -809,7 +792,7 @@ public class Main {
 			Insurance insurance = insuranceList.retrieveInsuranceDetail(contract.getInsuranceID());
 			selectedInsurances.add(insurance);
 		}
-
+		System.out.println();
 		showInsuranceList(selectedContracts, selectedInsurances);
 		// 보유 계약 리스트(보험명/만기 여부/해지여부/납입 여부)
 	}
@@ -821,9 +804,9 @@ public class Main {
 				selectedInsurance = insurance;
 			}
 			System.out.println("보험명 : " + selectedInsurance.getInsuranceName());
-			System.out.println("만기 여부 : " + contract.isMaturity());
-			System.out.println("해지여부 : " + contract.isCancellation());
-			System.out.println("부활 여부 : " + contract.isResurrection() + "\n");
+			System.out.println("만기 여부 : " + (contract.isMaturity() ? "예" : "아니오"));
+			System.out.println("해지여부 : " + (contract.isCancellation() ? "예" : "아니오"));
+			System.out.println("부활 여부 : " + (contract.isResurrection() ? "예" : "아니오") + "\n");
 		}
 
 	}
@@ -1921,8 +1904,7 @@ public class Main {
 			if (Integer.parseInt(btnChoice) >= 0 && Integer.parseInt(btnChoice) < unPaidCustomerId.size()) {
 				selectedCustomerId = unPaidCustomerId.get(Integer.parseInt(btnChoice));
 				customerInfo.add(customerListImpl.retrieveCustomer(selectedCustomerId));
-				familyInfo
-						.addAll(familyHistoryListImpl.getAllFamilyHistoryFromId(selectedCustomerId, familyHistoryListImpl));
+				familyInfo.addAll(familyHistoryListImpl.getAllFamilyHistoryFromId(selectedCustomerId));
 				ArrayList<Payment> customerPayments = paymentListImpl.retreiveCustomerPayment(selectedCustomerId);
 				for (Payment payment : customerPayments) {
 					Contract contract = contractListImpl.getContractByInsuranceID(payment.getInsuranceID());

@@ -1,6 +1,5 @@
 package Interface;
 
-import java.io.BufferedReader;
 import java.io.Serializable;
 
 public class Survey implements Serializable {
@@ -13,9 +12,6 @@ public class Survey implements Serializable {
 	private boolean responsibility;
 	private String responsibilityReason;
 
-	/**
-	 * Getters & Setters
-	 */
 	public String getCCID() {
 		return CCID;
 	}
@@ -84,8 +80,8 @@ public class Survey implements Serializable {
 
 	public void requestBanking() {
 	}
-
 	public boolean matchID(String ccid) {
 		return this.CCID.equals(ccid);
+
 	}
 }

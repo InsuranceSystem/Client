@@ -1,7 +1,5 @@
 package Interface;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Serializable;
 
 	public class CompensationClaim implements Serializable {

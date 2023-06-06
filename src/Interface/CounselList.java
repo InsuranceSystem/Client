@@ -18,7 +18,7 @@ public interface CounselList extends Remote{
 
 	public void update(Counsel updateCounsel)throws Exception ,RemoteException;
 	public Counsel getCounselbyId(String customerID)throws RemoteException;
-
+	
 	public Counsel getCounselbyCounselId(String counselID) throws RemoteException;
 	public List<Counsel> getCounselList(String customerID) throws RemoteException;
 }

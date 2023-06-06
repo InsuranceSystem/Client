@@ -13,4 +13,5 @@ public interface CounselApplicationList extends Remote{
 	public boolean update(CounselApplication counselApplication, String counselID)throws RemoteException;
 	public ArrayList<CounselApplication> retrieve()throws RemoteException;
 	public CounselApplication getCounselApplicationById(String id) throws RemoteException;
+	public CounselApplication getCounselApplicationByCustomerId(String id) throws RemoteException;
 }

@@ -85,8 +85,7 @@ public class Survey implements Serializable {
 	public void requestBanking() {
 	}
 
-	public boolean matchId(String ccid) {
+	public boolean matchID(String ccid) {
 		return this.CCID.equals(ccid);
-
 	}
 }

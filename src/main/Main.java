@@ -1455,42 +1455,42 @@ public class Main {
 
 		Insurance insurance = new Insurance();
 		System.out.println("--------보험 설계 화면---------");
-		System.out.println("보험 ID : "); insurance.setInsuranceID(inputReader.readLine().trim());
-		System.out.println("보험명 : "); insurance.setInsuranceName(inputReader.readLine().trim());
-		System.out.println("보험 종류 : "); insurance.setType(inputReader.readLine().trim());
+		System.out.print("보험 ID : "); insurance.setInsuranceID(inputReader.readLine().trim());
+		System.out.print("보험명 : "); insurance.setInsuranceName(inputReader.readLine().trim());
+		System.out.print("보험 종류 : "); insurance.setType(inputReader.readLine().trim());
 		while(true) {
-		System.out.println("보험가입금액 : "); String input = inputReader.readLine().trim();
+		System.out.print("보험가입금액 : "); String input = inputReader.readLine().trim();
 		if(isInteger(input)) { insurance.setMaxCompensation(Integer.valueOf(input)); break;}
 		else System.out.println("숫자로 입력해주세요");
 		}
-		System.out.println("보험 기간 : "); insurance.setPeriodOfInsurance(inputReader.readLine().trim());
-		System.out.println("납입 주기 : "); insurance.setPaymentCycle(inputReader.readLine().trim());
-		System.out.println("납입 기간 : "); insurance.setPaymentPeriod(inputReader.readLine().trim());
-		System.out.println("가입 나이 : "); insurance.setAgeOfTarget(inputReader.readLine().trim());
+		System.out.print("보험 기간 : "); insurance.setPeriodOfInsurance(inputReader.readLine().trim());
+		System.out.print("납입 주기 : "); insurance.setPaymentCycle(inputReader.readLine().trim());
+		System.out.print("납입 기간 : "); insurance.setPaymentPeriod(inputReader.readLine().trim());
+		System.out.print("가입 나이 : "); insurance.setAgeOfTarget(inputReader.readLine().trim());
 		while(true) {
-			System.out.println("기본 보험료 : "); String input = inputReader.readLine().trim();
+			System.out.print("기본 보험료 : "); String input = inputReader.readLine().trim();
 			if(isInteger(input)) {insurance.setBasicPremium(Integer.valueOf(input)); break;}
 			else System.out.println("숫자로 입력해주세요");
 		}
-		System.out.println("요율 : "); insurance.setRate(inputReader.readLine().trim());
-		System.out.println("배당 여부: "); insurance.setDistributionStatus(Boolean.parseBoolean(inputReader.readLine().trim()));
+		System.out.print("요율 : "); insurance.setRate(inputReader.readLine().trim());
+		System.out.print("배당 여부: "); insurance.setDistributionStatus(Boolean.parseBoolean(inputReader.readLine().trim()));
 		while (true) {
-			System.out.println("보장 내용(약관ID) : ");
+			System.out.print("보장 내용(약관ID) : ");
 			String TermsList = inputReader.readLine().trim();
 			String[] termsIDListSplit = TermsList.split(",");
 			boolean result = true;
 			for (int i = 0; i < termsIDListSplit.length; i++) {
 			if (termsListImpl.isExistTermsID(termsIDListSplit[i]) == false) {result = false;  break;}
 			}
-			if(result==false) System.out.println("약관ID가 존재하지 않습니다. 다시 입력해주세요");
+			if(result==false) System.out.println("약관이 존재하지 않습니다. 다시 입력해주세요");
 			else {insurance.setTermsIDList(TermsList); break;}
 		}
-		System.out.println("주의사항 : "); insurance.setPrecaution(inputReader.readLine().trim());
-		System.out.println("보험 면책 기간 : "); insurance.setInsuranceClausePeriod(inputReader.readLine().trim());
-		System.out.println("입력한 내용을 저장하시겠습니까? (Y/N)");
+		System.out.print("주의사항 : "); insurance.setPrecaution(inputReader.readLine().trim());
+		System.out.print("보험 면책 기간 : "); insurance.setInsuranceClausePeriod(inputReader.readLine().trim());
+		System.out.print("입력한 내용을 저장하시겠습니까? (Y/N)");
 
 		while(true) {
-		System.out.println("선택 : ");
+		System.out.print("선택 : ");
 		String save = inputReader.readLine().trim();	
 		if (save.equals("Y")&&insurance.checkAllFillIn()==true) {	
 			if(insuranceListImpl.createInsurance(insurance)) System.out.println("저장되었습니다.");
@@ -1520,8 +1520,8 @@ public class Main {
 		System.out.println("12. 주의사항 : "+insurance.getPrecaution()); 
 		System.out.println("13. 보험 면책 기간 : "+insurance.getInsuranceClausePeriod());
 		System.out.println("==========================================");
-		System.out.println("정보 번호 : "); choice = inputReader.readLine().trim();
-		System.out.println("수정할 내용 :"); String content = inputReader.readLine().trim();
+		System.out.print("정보 번호 : "); choice = inputReader.readLine().trim();
+		System.out.print("수정할 내용 :"); String content = inputReader.readLine().trim();
 		System.out.println("==========================================");
 		switch (choice) {
 		case ("1"): insurance.setInsuranceName(content); break;
@@ -1568,7 +1568,7 @@ public class Main {
 		System.out.println("수정한 내용을 저장하시겠습니까? (Y/N)");
 		System.out.println(insurance.toStringDesignInsurance());
 		while(true) {
-		System.out.println("선택 : ");
+		System.out.print("선택 : ");
 		String save = inputReader.readLine().trim();	
 		if (save.equals("Y")) {	
 			if (insuranceListImpl.updateinsurance(insurance)) System.out.println("수정이 저장되었습니다.");
@@ -1580,7 +1580,7 @@ public class Main {
 	}
 
 	private static void deleteInsurance(InsuranceList insuranceListImpl, String insuranceID, BufferedReader inputReader) throws Exception {
-		System.out.println("보험ID : " + insuranceID + "를 삭제하시겠습니까? (Y/N)");
+		System.out.println("보험ID : " + insuranceID + "를 삭제하시겠습니까? (Y/N)");		
 		while(true) {
 		String choice = inputReader.readLine().trim();
 		if (choice.equals("Y")) {

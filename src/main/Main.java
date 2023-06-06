@@ -522,7 +522,7 @@ public class Main {
 	    System.out.println("===============================");
 	    System.out.println("          상담 관련 정보           ");
 	    System.out.println("===============================");
-	    System.out.printf("%-10s %-15s%n", "이름", counsel.getCounselID());
+	    System.out.printf("%-10s %-15s%n", "이름", customer.getCustomerName());
 	    System.out.printf("%-10s %-15s%n", "담당자명", counsel.getManagerName());
 	}
 

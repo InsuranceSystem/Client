@@ -281,68 +281,68 @@ public class Main {
 	}
 
 	private static void showManageConsultation(BufferedReader inputReader,
-			CounselList counselList, CustomerList customerList, CounselApplicationList counselApplicationList)
-			throws Exception {
-		if (selectConsultationCase(inputReader)) { // 상담 정보 조회
-			String id = null;
-			Counsel counsel = null;
-			CounselApplication counselApplication = null;
-			Customer customer = null;
-			do {
-				System.out.print("고객 ID : ");
-				id = inputReader.readLine().trim();
-			} while (!checkInputId(id));
-			customer = customerList.getCustomerByID(id);
-			counsel = counselList.getCounselbyId(customer.getCustomerID());
-			counselApplication = counselApplicationList.getCounselApplicationByCustomerId(customer.getCustomerID());
-			if (counsel == null) {
-				System.out.println("일치하는 data가 하나도 없습니다.");
-				return;
-			}
-			showCounselSchedule(counselApplication, customer, counsel);
-			if (!getCustomerDetails(inputReader)) return;
-			if (counsel.getContent() == null) {
-				System.out.println("상담을 아직 진행하지 않아 내용이 없습니다.");
-				return;
-			}
-			showDetailcounselInfo(counselApplication, customer, counsel);
+         CounselList counselList, CustomerList customerList, CounselApplicationList counselApplicationList)
+         throws Exception {
+      if (selectConsultationCase(inputReader)) { // 상담 정보 조회
+         String id = null;
+         Counsel counsel = null;
+         CounselApplication counselApplication = null;
+         Customer customer = null;
+         do {
+            System.out.print("고객 ID : ");
+            id = inputReader.readLine().trim();
+         } while (!checkInputId(id));
+         customer = customerList.getCustomerByID(id);
+         counselApplication = counselApplicationList.getCounselApplicationByCustomerId(customer.getCustomerID());
+         counsel = counselList.getCounselbyCounselId(counselApplication.getCounselID());
+         if (counsel == null) {
+            System.out.println("일치하는 data가 하나도 없습니다.");
+            return;
+         }
+         showCounselSchedule(counselApplication, customer, counsel);
+         if (!getCustomerDetails(inputReader)) return;
+         if (counsel.getContent() == null) {
+            System.out.println("상담을 아직 진행하지 않아 내용이 없습니다.");
+            return;
+         }
+         showDetailcounselInfo(counselApplication, customer, counsel);
 
-			if (selectRetOrDel(inputReader)) // 내용 조회
-				showContentInfo(customer, counsel);
-			else { // 내용 삭제
-				counselList.delete(counsel.getCounselID());
-				System.out.println("삭제되었습니다");
-			}
-		} else { // 상담 정보 등록
-			if (selectScheduleOrContent(inputReader)) {
-				System.out.println("\n[상담 일정 등록]");
-				System.out.println("****** 상담 대기 예비 고객 리스트 ******");
-				printAllCounselIDs(counselList);
-				Counsel newCounsel = registerCounselDate(inputReader, counselList, counselApplicationList);
-				counselList.update(newCounsel);
-				System.out.println("상담 일정을 등록하였습니다.");
-			} else {
-				System.out.println("\n상담 내용 등록");
-				String input = null;
-				boolean isInputed = false;
-				do {
-					input = inputCounselId(inputReader);
-					isInputed = input.length() != 0;
-					if (!isInputed)
-						System.out.println("조건을 최소 하나라도 기입했는지 체크해주세요.");
-				} while (!isInputed);
-				Counsel selectedCounsel = counselList.getCounselbyCounselId(input);
-				Customer customer = customerList.retrieveCustomer(selectedCounsel.getCustomerID());
-				showCousel(customer, selectedCounsel);
-				if (!selectContentAcquire(inputReader))
-					return;
-				String content = inputContent(inputReader); // 상담내용
-				selectedCounsel.setContent(content);
-				counselList.update(selectedCounsel); 
-				System.out.println("상담 내용을 등록하였습니다.");
-			}
-		}
-	}
+         if (selectRetOrDel(inputReader)) // 내용 조회
+            showContentInfo(customer, counsel);
+         else { // 내용 삭제
+            counselList.delete(counsel.getCounselID());
+            System.out.println("삭제되었습니다");
+         }
+      } else { // 상담 정보 등록
+         if (selectScheduleOrContent(inputReader)) {
+            System.out.println("\n[상담 일정 등록]");
+            System.out.println("****** 상담 대기 예비 고객 리스트 ******");
+            printAllCounselIDs(counselList);
+            Counsel newCounsel = registerCounselDate(inputReader, counselList, counselApplicationList);
+            counselList.update(newCounsel);
+            System.out.println("상담 일정을 등록하였습니다.");
+         } else {
+            System.out.println("\n상담 내용 등록");
+            String input = null;
+            boolean isInputed = false;
+            do {
+               input = inputCounselId(inputReader);
+               isInputed = input.length() != 0;
+               if (!isInputed)
+                  System.out.println("조건을 최소 하나라도 기입했는지 체크해주세요.");
+            } while (!isInputed);
+            Counsel selectedCounsel = counselList.getCounselbyCounselId(input);
+            Customer customer = customerList.retrieveCustomer(selectedCounsel.getCustomerID());
+            showCousel(customer, selectedCounsel);
+            if (!selectContentAcquire(inputReader))
+               return;
+            String content = inputContent(inputReader); // 상담내용
+            selectedCounsel.setContent(content);
+            counselList.update(selectedCounsel); 
+            System.out.println("상담 내용을 등록하였습니다.");
+         }
+      }
+   }
 	private static void showCousel(Customer customer, Counsel selectedCouncel) {
 	    System.out.println("\n------------------- 상담 일정 목록 -------------------");
 	    System.out.println("날짜     : " + selectedCouncel.getDateOfCounsel());

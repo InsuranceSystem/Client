@@ -1224,16 +1224,9 @@ public class Main {
 			System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 			+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: "
 			+ insurance.getPeriodOfInsurance() + "\n납입기간: " + insurance.getPaymentPeriod() + "\n가입나이: "
-			+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(보통약관)");
-
-			ArrayList<Guarantee> guarantees = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID());
-			for (int i = 0; i < guarantees.size(); i++) {
-				Guarantee guaranteeByIID = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID()).get(i);
-				Terms terms = termsList.getTermsByID(guaranteeByIID.getTermsID());
-				System.out.println("약관명: " + terms.getTermsName() + "  약관내용: " + terms.getTermsContent());
-			}
+			+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(약관ID) :"+insurance.getTermsIDList());
 			System.out.println("배당여부: " + insurance.isDistributionStatus() + "\n주의사항: " + insurance.getPrecaution());
-			
+			System.out.println("==========================================");
 			while(true) {				
 				System.out.println("인가 요청을 진행할 보험이 확실합니까? (Y/N)");
 				System.out.println("선택 : ");
@@ -1265,15 +1258,9 @@ public class Main {
 				System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 				+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: "
 				+ insurance.getPeriodOfInsurance() + "\n납입기간: " + insurance.getPaymentPeriod() + "\n가입나이: "
-				+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(보통약관)");
-
-				ArrayList<Guarantee> guarantees = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID());
-				for (int i = 0; i < guarantees.size(); i++) {
-					Guarantee guaranteeByIID = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID()).get(i);
-					Terms terms = termsList.getTermsByID(guaranteeByIID.getTermsID());
-					System.out.println("약관명: " + terms.getTermsName() + "  약관내용: " + terms.getTermsContent());
-				}
+				+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(약관ID) :"+insurance.getTermsIDList());
 				System.out.println("배당여부: " + insurance.isDistributionStatus() + "\n주의사항: " + insurance.getPrecaution());
+				System.out.println("==========================================");
 				while(true) {				
 				System.out.println("금융감독원에 의해 인가받은 보험이 확실합니까? (Y/N)");
 				System.out.println("선택 : ");
@@ -1423,14 +1410,7 @@ public class Main {
 				System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 				+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: "
 				+ insurance.getPeriodOfInsurance() + "\n납입기간: " + insurance.getPaymentPeriod() + "\n가입나이: "
-				+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(보통약관)");
-
-				ArrayList<Guarantee> guarantees = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID());
-			for (int i = 0; i < guarantees.size(); i++) {
-				Guarantee guaranteeByIID = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID()).get(i);
-				Terms terms = termsList.getTermsByID(guaranteeByIID.getTermsID());
-				System.out.println("약관명: " + terms.getTermsName() + "  약관내용: " + terms.getTermsContent());
-			}
+				+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(약관ID) : "+insurance.getTermsIDList());
 			System.out.println("배당여부: " + insurance.isDistributionStatus() + "\n주의사항: " + insurance.getPrecaution());
 				System.out.println("1. 수정, 2. 삭제");
 				String choice = inputReader.readLine().trim();
@@ -1541,8 +1521,7 @@ public class Main {
 		case ("9"): insurance.setRate(content); break;
 		case ("10"): insurance.setDistributionStatus(Boolean.parseBoolean(content)); break;
 		case ("11"): 
-			String TermsList = inputReader.readLine().trim();
-			String[] termsIDListSplit = TermsList.split(",");
+			String[] termsIDListSplit = content.split(",");
 			boolean result = true;
 			for (int i = 0; i < termsIDListSplit.length; i++) {
 			if (termsListImpl.isExistTermsID(termsIDListSplit[i]) == false) 

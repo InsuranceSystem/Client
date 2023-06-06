@@ -15,7 +15,6 @@ public interface CompensationClaimList extends Remote{
 
 	boolean update() throws RemoteException;
 	boolean delete(String CCID) throws Exception, RemoteException;
-
 	CompensationClaim getCompensationClaimbyID(String ccid) throws RemoteException;
 
 }

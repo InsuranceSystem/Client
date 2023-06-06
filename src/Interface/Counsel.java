@@ -11,7 +11,6 @@ public class Counsel implements Serializable {
 
 	private String counselID; // 
 	private String customerID;
-	private String requirement;
 	private Customer customer;
 
 	public String getContent() {
@@ -54,13 +53,6 @@ public class Counsel implements Serializable {
 		this.customerID = customerID;
 	}
 
-	public String getRequirement() {
-		return requirement;
-	}
-
-	public void setRequirement(String requirement) {
-		this.requirement = requirement;
-	}
 
 	public Customer getCustomer() {
 		return customer;

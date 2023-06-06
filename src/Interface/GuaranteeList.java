@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public interface GuaranteeList extends Remote{
 	boolean create(Guarantee newguarantee) throws Exception, RemoteException;
 
-	ArrayList<Guarantee> getAllGuranteeByID(String insuranceID)throws RemoteException;
+	ArrayList<Guarantee> getAllGuranteeByID(String insuranceID)throws RemoteException, Exception;
 
 	boolean deleteGuranteeById(String insuranceID) throws Exception,RemoteException;
 }

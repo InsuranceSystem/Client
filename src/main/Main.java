@@ -1209,7 +1209,7 @@ public class Main {
 	}
 	
 	private static void requestAuthorization(InsuranceList insuranceListImpl, BufferedReader inputReader, GuaranteeList guaranteeList, TermsList termsList)
-			throws IOException {
+			throws Exception {
 		System.out.println("****************** 인가 요청 화면 *******************");
 		System.out.println("================설계 보험 리스트=======================");
 		showList(insuranceListImpl.getUnregisteredInsuranceList());
@@ -1224,7 +1224,13 @@ public class Main {
 			System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 			+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: "
 			+ insurance.getPeriodOfInsurance() + "\n납입기간: " + insurance.getPaymentPeriod() + "\n가입나이: "
-			+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(약관ID) :"+insurance.getTermsIDList());
+			+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(보통약관):");
+			ArrayList<Guarantee> guarantees = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID());
+			for (int i = 0; i < guarantees.size(); i++) {
+				Guarantee guaranteeByIID = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID()).get(i);
+				Terms terms = termsList.getTermsByID(guaranteeByIID.getTermsID());
+				System.out.println("약관명: " + terms.getTermsName() + "  약관내용: " + terms.getTermsContent());
+			}
 			System.out.println("배당여부: " + insurance.isDistributionStatus() + "\n주의사항: " + insurance.getPrecaution());
 			System.out.println("==========================================");
 			while(true) {				
@@ -1258,7 +1264,13 @@ public class Main {
 				System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 				+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: "
 				+ insurance.getPeriodOfInsurance() + "\n납입기간: " + insurance.getPaymentPeriod() + "\n가입나이: "
-				+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(약관ID) :"+insurance.getTermsIDList());
+				+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(보통약관):");
+				ArrayList<Guarantee> guarantees = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID());
+				for (int i = 0; i < guarantees.size(); i++) {
+					Guarantee guaranteeByIID = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID()).get(i);
+					Terms terms = termsList.getTermsByID(guaranteeByIID.getTermsID());
+					System.out.println("약관명: " + terms.getTermsName() + "  약관내용: " + terms.getTermsContent());
+				}
 				System.out.println("배당여부: " + insurance.isDistributionStatus() + "\n주의사항: " + insurance.getPrecaution());
 				System.out.println("==========================================");
 				while(true) {				
@@ -1355,7 +1367,7 @@ public class Main {
 
 	private static boolean showTermsAndConditions(Customer customer, Insurance insurance,
 			InsuranceApplication insuranceApplication, FamilyHistoryList familyHistoryList,
-			GuaranteeList guaranteeList, TermsList termsList, BufferedReader inputReader) throws IOException {
+			GuaranteeList guaranteeList, TermsList termsList, BufferedReader inputReader) throws Exception {
 		System.out.println("********** 보험 약관 안내 **********");
 		System.out.println("--------보험 정보--------");
 
@@ -1410,7 +1422,13 @@ public class Main {
 				System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 				+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: "
 				+ insurance.getPeriodOfInsurance() + "\n납입기간: " + insurance.getPaymentPeriod() + "\n가입나이: "
-				+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(약관ID) : "+insurance.getTermsIDList());
+				+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(보통약관):");
+				ArrayList<Guarantee> guarantees = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID());
+				for (int i = 0; i < guarantees.size(); i++) {
+					Guarantee guaranteeByIID = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID()).get(i);
+					Terms terms = termsList.getTermsByID(guaranteeByIID.getTermsID());
+					System.out.println("약관명: " + terms.getTermsName() + "  약관내용: " + terms.getTermsContent());
+				}
 			System.out.println("배당여부: " + insurance.isDistributionStatus() + "\n주의사항: " + insurance.getPrecaution());
 				System.out.println("1. 수정, 2. 삭제");
 				String choice = inputReader.readLine().trim();

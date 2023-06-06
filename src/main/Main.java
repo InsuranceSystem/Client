@@ -3,6 +3,7 @@ package main;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.ParseException;
@@ -122,7 +123,7 @@ public class Main {
 			userChoice = inputReader.readLine().trim();
 			switch (userChoice) {
 			case "1":
-				createCompensationClaim(insuranceList, compensationClaimList, carAccidentList, contractListImpl,
+				createCompensationClaim(insuranceList, compensationClaimList,carAccidentList, contractListImpl,
 						customerListImpl, inputReader);
 				break;
 			case "2":
@@ -141,7 +142,7 @@ public class Main {
 						paymentListImpl, compensationClaimList);
 				break;
 			case "6":
-				showCouncel(inputReader, counselApplicationListImpl);
+				showCouncel(inputReader, counselApplicationListImpl,counselListImpl,customerListImpl);
 				break;
 			case "7":
 				showManageConsultation(inputReader, counselListImpl, customerListImpl, counselApplicationListImpl);
@@ -291,17 +292,15 @@ public class Main {
 				System.out.print("고객 ID : ");
 				id = inputReader.readLine().trim();
 			} while (!checkInputId(id));
-			counsel = counselList.getCounselbyId(id);
-			counselApplication = counselApplicationList.getCounselApplicationById(id);
+			customer = customerList.getCustomerByID(id);
+			counsel = counselList.getCounselbyId(customer.getCustomerID());
+			counselApplication = counselApplicationList.getCounselApplicationByCustomerId(customer.getCustomerID());
 			if (counsel == null) {
 				System.out.println("일치하는 data가 하나도 없습니다.");
 				return;
 			}
-
-			customer = customerList.getCustomerByID(counsel.getCustomerID());
 			showCounselSchedule(counselApplication, customer, counsel);
-			if (!getCustomerDetails(inputReader))
-				return;
+			if (!getCustomerDetails(inputReader)) return;
 			if (counsel.getContent() == null) {
 				System.out.println("상담을 아직 진행하지 않아 내용이 없습니다.");
 				return;
@@ -314,44 +313,56 @@ public class Main {
 				counselList.delete(counsel.getCounselID());
 				System.out.println("삭제되었습니다");
 			}
-		}else { // 상담 정보 등록
+		} else { // 상담 정보 등록
 			if (selectScheduleOrContent(inputReader)) {
 				System.out.println("\n[상담 일정 등록]");
-				Counsel newCounsel = registerCounselDate(inputReader);
-				if (counselList.add(newCounsel)) 
-					System.out.println("상담 일정을 등록하였습니다.");
-				else
-					System.out.println("등록에 실패했습니다.");
+				System.out.println("****** 상담 대기 예비 고객 리스트 ******");
+				printAllCounselIDs(counselList);
+				Counsel newCounsel = registerCounselDate(inputReader, counselList, counselApplicationList);
+				counselList.update(newCounsel);
+				System.out.println("상담 일정을 등록하였습니다.");
 			} else {
 				System.out.println("\n상담 내용 등록");
 				String input = null;
 				boolean isInputed = false;
 				do {
-					input = inputCustomerId(inputReader);
+					input = inputCounselId(inputReader);
 					isInputed = input.length() != 0;
 					if (!isInputed)
 						System.out.println("조건을 최소 하나라도 기입했는지 체크해주세요.");
 				} while (!isInputed);
-				Customer customer = customerList.retrieveCustomer(input);
-				if (customer == null) {
-					System.out.println("관련 상담 일정이 하나도 존재하지 않습니다.");
-					return;
-				}
-				List<Counsel> selectedCouncels = counselList.getCounselList(customer.getCustomerID());
-				showCounseList(customer, selectedCouncels);
+				Counsel selectedCounsel = counselList.getCounselbyCounselId(input);
+				Customer customer = customerList.retrieveCustomer(selectedCounsel.getCustomerID());
+				showCousel(customer, selectedCounsel);
 				if (!selectContentAcquire(inputReader))
 					return;
 				String content = inputContent(inputReader); // 상담내용
-				Counsel selectedCounsel = null;
-				if (selectedCouncels.size() == 1) // Basic
-					selectedCounsel = selectedCouncels.get(0);
-				else if (selectedCouncels.size() > 2) // A3.
-					selectedCounsel = selectFromCouncels(inputReader, selectedCouncels);
 				selectedCounsel.setContent(content);
 				counselList.update(selectedCounsel); 
 				System.out.println("상담 내용을 등록하였습니다.");
 			}
 		}
+	}
+	private static void showCousel(Customer customer, Counsel selectedCouncel) {
+	    System.out.println("\n------------------- 상담 일정 목록 -------------------");
+	    System.out.println("날짜     : " + selectedCouncel.getDateOfCounsel());
+	    System.out.println("고객명    : " + customer.getCustomerName());
+	    System.out.println("담당자명  : " + selectedCouncel.getManagerName());
+	    System.out.println("----------------------------------------------------\n");
+	}
+
+	private static void printAllCounselIDs(CounselList counselList) throws RemoteException {
+		   System.out.println("----------------------------");
+		    System.out.println("번호\t\t상담 ID");
+		    System.out.println("----------------------------");
+
+		    int i = 1;
+		    for (Counsel counsel : counselList.retrieve()) {
+		        System.out.println(i + "\t\t" + counsel.getCounselID());
+		        i++;
+		    }
+		    
+		    System.out.println("----------------------------");
 	}
 
 	private static Counsel selectFromCouncels(BufferedReader inputReader,
@@ -367,74 +378,96 @@ public class Main {
 	}
 
 	private static void showContentInfo(Customer customer, Counsel counsel) {
-		System.out.println("[상담 내용 정보]");
-		System.out.println("고객명 : " + customer.getCustomerName());
-		System.out.println("담당자명 : " + counsel.getManagerName());
-		System.out.println("상담 내용 : " + counsel.getContent());
+	    System.out.println("===============================");
+	    System.out.println("         상담 내용 정보         ");
+	    System.out.println("===============================");
+	    System.out.printf("%-10s %-15s%n", "고객명", customer.getCustomerName());
+	    System.out.printf("%-10s %-15s%n", "담당자명", counsel.getManagerName());
+	    System.out.printf("%-10s %-15s%n", "상담 내용", counsel.getContent());
 	}
 
 	private static void showDetailcounselInfo(CounselApplication counselApplication, Customer customer, Counsel counsel) {
-		System.out.println("\n[세부 내역]");
-		System.out.println("첫째날 : " + counselApplication.getDateOfFirst());
-		System.out.println("둘째날 : " + counselApplication.getDateOfSecond());
-		System.out.println("담당자명 : " + counsel.getManagerName());
-		System.out.println("고객 아이디 : " + customer.getCustomerID());
-		System.out.println("고객명 : " + customer.getCustomerName());
-		System.out.println("고객 전화번호 : " + customer.getPnumber());
-		System.out.println("요구사항 : " + counselApplication.getRequirement());
+	    System.out.println("===============================");
+	    System.out.println("          세부 내역          ");
+	    System.out.println("===============================");
+	    System.out.printf("%-10s %-15s%n", "고객 아이디", customer.getCustomerID());
+	    System.out.printf("%-10s %-15s%n", "고객명", customer.getCustomerName());
+	    System.out.printf("%-10s %-15s%n", "고객 전화번호", customer.getPnumber());
+	    System.out.printf("%-10s %-15s%n", "요구사항", counselApplication.getRequirement());
+	    System.out.printf("%-10s %-15s%n", "유형", counselApplication.getCategory());
+	    System.out.printf("%-10s %-15s%n", "내용", counsel.getContent());
 	}
 
-	private static Counsel registerCounselDate(BufferedReader inputReader) throws ParseException, IOException {
-		Counsel counsel = new Counsel();
-		String counselId = null;
-		String customerId = null;
-		String content = null;
-		String manager = null;
-		String req = null;
-		String dateStr = null;
-		boolean allInput = false;
-		do {
-			System.out.print("상담ID : "); 
-			counselId= inputReader.readLine().trim();
-			System.out.print("고객ID : ");
-			customerId = inputReader.readLine().trim();
-			System.out.println("내용 : ");
-			content = inputReader.readLine().trim();
-			System.out.print("담당자명 : ");
-			manager = inputReader.readLine().trim();
-			System.out.print("요구사항 : ");
-			req = inputReader.readLine().trim();
-			System.out.print("날짜 : "); // yyyymmdd
-			dateStr = inputReader.readLine().trim();
-			allInput = isAllInput(counselId, customerId,content,manager,req,dateStr);
-			if (!allInput)
-				System.out.println("항목을 모두 입력해주세요.");
-		} while (!allInput);
-		counsel.setCounselID(counselId);
-        counsel.setCustomerID(customerId);
-		counsel.setContent(content);
-		counsel.setManagerName(manager);
-		counsel.setRequirement(req);
-		int year = Integer.parseInt(dateStr.substring(0, 4));
-		int month = Integer.parseInt(dateStr.substring(4, 6));
-		int day = Integer.parseInt(dateStr.substring(6, 8));
-		LocalDate date = LocalDate.of(year, month, day);
-		counsel.setDateOfCounsel(date);
-		return counsel;
+	private static Counsel registerCounselDate(
+	        BufferedReader inputReader,
+	        CounselList counselList,
+	        CounselApplicationList counselApplicationList)
+	        throws ParseException, IOException {
+	    String counselId = null;
+	    String content = null;
+	    String manager = null;
+	    boolean allInput = false;
+	    LocalDate date = null;
+	    Counsel counsel = null;
+	    CounselApplication counselApplication = null;
+
+	    do {
+	        System.out.println("===============================");
+	        System.out.println("        상담 일정 등록         ");
+	        System.out.println("===============================");
+	        System.out.print("상담 ID: ");
+	        counselId = inputReader.readLine().trim();
+
+	        counsel = counselList.getCounselbyCounselId(counselId);
+	        if (counsel == null) {
+	            System.out.println("해당 상담 ID를 가진 상담이 없습니다. 다시 입력해주세요.");
+	            continue;
+	        }
+
+	        counselApplication = counselApplicationList.getCounselApplicationById(counselId);
+
+	        System.out.println("1지망: " + counselApplication.getDateOfFirst());
+	        System.out.println("2지망: " + counselApplication.getDateOfSecond());
+
+	        String input = null;
+	        boolean validInputDate = false;
+
+	        do {
+	            System.out.print("날짜 입력(1: 1지망, 2: 2지망): ");
+	            input = inputReader.readLine().trim();
+	            validInputDate = isValidInput(input);
+	            if (!validInputDate) {
+	                System.out.println("1과 2 중에 입력해주세요.");
+	            }
+	        } while (!validInputDate);
+
+	        date = input.equals("1") ?
+	                counselApplication.getDateOfFirst() :
+	                counselApplication.getDateOfSecond();
+
+	        System.out.print("담당자명: ");
+	        manager = inputReader.readLine().trim();
+
+	        allInput = isAllInput(counselId, manager);
+	        if (!allInput) {
+	            System.out.println("항목을 모두 입력해주세요.");
+	        }
+	    } while (!allInput);
+
+	    counsel.setManagerName(manager);
+	    counsel.setDateOfCounsel(date);
+
+	    return counsel;
 	}
 
-	private static boolean isAllInput(String counselId, String customerId, String content, String manager, String req,String dateStr) {
+	private static boolean isValidInput(String input) {
+		return input.equals("1") || input.equals("2");
+	}
+
+	private static boolean isAllInput(String counselId, String manager) {
 		if (counselId.length() == 0)
 			return false;
-		if (customerId.length() == 0)
-			return false;
-		if (content.length() == 0)
-			return false;
 		if (manager.length() == 0)
-			return false;
-		if (req.length() == 0)
-			return false;
-		if (dateStr.length() == 0)
 			return false;
 		return true;
 	}
@@ -451,13 +484,14 @@ public class Main {
 		System.out.print("입력 : ");
 		return inputReader.readLine().trim().equals("1");
 	}
-
 	private static boolean selectScheduleOrContent(BufferedReader inputReader) throws IOException {
-		System.out.println("\n[상담 정보 등록]");
-		System.out.println("1. 상담 일정 등록");
-		System.out.println("2. 상담 내용 등록");
-		System.out.print("입력 : ");
-		return inputReader.readLine().trim().equals("1");
+	    System.out.println("===============================");
+	    System.out.println("        상담 정보 등록        ");
+	    System.out.println("===============================");
+	    System.out.println("1. 상담 일정 등록");
+	    System.out.println("2. 상담 내용 등록");
+	    System.out.print("입력: ");
+	    return inputReader.readLine().trim().equals("1");
 	}
 
 	private static boolean selectRetOrDel(BufferedReader inputReader) throws IOException {
@@ -473,13 +507,23 @@ public class Main {
 			System.out.println("담당자명 : " + counsel.getManagerName());
 		}
 	}
-
 	private static void showCounselSchedule(CounselApplication counselApplication, Customer customer, Counsel counsel) {
-		System.out.println("\n[상담 일정]");
-		System.out.println("첫째날 : " + counselApplication.getDateOfFirst()); // counselApplication
-		System.out.println("둘째날 : " + counselApplication.getDateOfSecond()); // counselApplication
-		System.out.println("이름 : " + customer.getCustomerName()); // customer
-		System.out.println("담당자명 : " + counsel.getManagerName()); // counsel
+	    System.out.println("===============================");
+	    System.out.println("          상담 희망 일정           ");
+	    System.out.println("===============================");
+	    System.out.printf("%-10s %-15s%n", "첫째날", counselApplication.getDateOfFirst());
+	    System.out.printf("%-10s %-15s%n", "둘째날", counselApplication.getDateOfSecond());
+	    System.out.println();
+	    System.out.println("===============================");
+	    System.out.println("          상담 실제 일정           ");
+	    System.out.println("===============================");
+	    System.out.printf("%-10s %-15s%n", "실제 상담일", counsel.getDateOfCounsel());
+	    System.out.println();
+	    System.out.println("===============================");
+	    System.out.println("          상담 관련 정보           ");
+	    System.out.println("===============================");
+	    System.out.printf("%-10s %-15s%n", "이름", counsel.getCounselID());
+	    System.out.printf("%-10s %-15s%n", "담당자명", counsel.getManagerName());
 	}
 
 	private static boolean checkInputId(String id) {
@@ -495,23 +539,25 @@ public class Main {
 		}
 		return true;
 	}
-
 	private static boolean selectConsultationCase(BufferedReader inputReader) throws IOException {
-		System.out.println("\n[상담 정보 관리]");
-		System.out.println("1. 상담 정보 조회");
-		System.out.println("2. 상담 정보 등록");
-		System.out.print("입력 : ");
-		return inputReader.readLine().trim().equals("1") ? true : false;
+	    System.out.println("===============================");
+	    System.out.println("       상담 정보 관리        ");
+	    System.out.println("===============================");
+	    System.out.println("1. 상담 정보 조회");
+	    System.out.println("2. 상담 정보 등록");
+	    System.out.print("입력: ");
+	    return inputReader.readLine().trim().equals("1");
 	}
 
-	private static void showCouncel(BufferedReader inputReader, CounselApplicationList counselApplicationList)
-			throws Exception {
-		getNewCouncel(counselApplicationList,inputReader); // 상담 내역 입력
+	private static void showCouncel(BufferedReader inputReader, CounselApplicationList counselApplicationList,CounselList counselList,CustomerList customerListImpl) throws Exception {
+		getNewCouncel(counselApplicationList,inputReader,counselList,customerListImpl); // 상담 내역 입력
 		System.out.println("상담 신청이 완료되었습니다.\n신청하신 상담일자에 전화드릴 예정입니다.");
 	}
 
-	private static void getNewCouncel(CounselApplicationList counselApplicationList,BufferedReader inputReader) throws Exception {
-		System.out.println("---------------상담 신청----------------");
+	private static void getNewCouncel(CounselApplicationList counselApplicationList,BufferedReader inputReader,CounselList counselList,CustomerList customerListImpl) throws Exception {
+	    System.out.println("===============================");
+	    System.out.println("         상담 신청         ");
+	    System.out.println("===============================");
 		//category, counselID,customerID, dateOfFirst,dateOfSecond,requirement
 		CounselApplication counselApplication = new CounselApplication();
 		Counsel counsel = new Counsel();
@@ -520,15 +566,41 @@ public class Main {
 		String dateStr2 = null;
 		String category = null;
 		String requirement = null;
+//		do {
+//			System.out.print("1. 고객 ID : ");
+//			customerId = inputReader.readLine().trim();
+//			if (customerListImpl.getCustomerByID(customerId) == null) 
+//				System.out.println("존재하지 않는 ID입니다"); 
+//			if (customerId.length() == 0)
+//				System.out.println("입력하지 않은 항목이 있습니다. 모든 항목을 입력해주세요.");
+//		} while (customerId.length() == 0);
+//		do {
+//		    System.out.print("1. 고객 ID: ");
+//		    customerId = inputReader.readLine().trim();
+//		    
+//		    if (customerListImpl.getCustomerByID(customerId) == null) {
+//		        System.out.println("존재하지 않는 ID입니다.");
+//		    }
+//		    
+//		    if (customerId.length() == 0) {
+//		        System.out.println("입력하지 않은 항목이 있습니다. 모든 항목을 입력해주세요.");
+//		    }
+//		} while (customerId.length() == 0);
+		 do {
+		        System.out.print("1. 고객 ID: ");
+		        customerId = inputReader.readLine().trim();
+		        
+		        if (customerListImpl.getCustomerByID(customerId) == null) {
+		            System.out.println("존재하지 않는 ID입니다.");
+		        }
+		        
+		        if (customerId.length() == 0) {
+		            System.out.println("입력하지 않은 항목이 있습니다. 모든 항목을 입력해주세요.");
+		        }
+		    } while (customerId.length() == 0 || customerListImpl.getCustomerByID(customerId) == null);
 		do {
-			System.out.print("고객 ID : ");
-			customerId = inputReader.readLine().trim();
-			if (customerId.length() == 0)
-				System.out.println("입력하지 않은 항목이 있습니다. 모든 항목을 입력해주세요.");
-		} while (customerId.length() == 0);
-
-		do {
-			System.out.print("1지망 일시 : ");
+			System.out.println("== 날짜는 yyyymmdd형태로 입력해주세요 ==");
+			System.out.print("2. 1지망 일시 :");
 			dateStr1 = inputReader.readLine().trim();
 			if (dateStr1.length() == 0)
 				System.out.println("입력하지 않은 항목이 있습니다. 모든 항목을 입력해주세요.");
@@ -537,9 +609,10 @@ public class Main {
 		int year = Integer.parseInt(dateStr1.substring(0, 4));
 		int month = Integer.parseInt(dateStr1.substring(4, 6));
 		int day = Integer.parseInt(dateStr1.substring(6, 8));
-                LocalDate date1 = LocalDate.of(year, month, day);
+		LocalDate date1 = LocalDate.of(year, month, day);
+
 		do {
-			System.out.print("2지망 일시 : ");
+			System.out.print("3. 2지망 일시 : ");
 			dateStr2 = inputReader.readLine().trim();
 			if (dateStr2.length() == 0)
 				System.out.println("입력하지 않은 항목이 있습니다. 모든 항목을 입력해주세요.");
@@ -551,14 +624,14 @@ public class Main {
 		LocalDate date2 = LocalDate.of(year, month, day);
 
 		do {
-			System.out.print("상담 유형 : ");
+			System.out.print("4. 상담 유형 : ");
 			category = inputReader.readLine().trim();
 			if (category.length() == 0)
 				System.out.println("입력하지 않은 항목이 있습니다. 모든 항목을 입력해주세요.");
 		} while (category.length() == 0);
 
 		do {
-			System.out.print("상세 내용 입력 : ");
+			System.out.print("5. 상세 내용 : ");
 			requirement = inputReader.readLine().trim();
 			if (requirement.length() == 0)
 				System.out.println("입력하지 않은 항목이 있습니다. 모든 항목을 입력해주세요.");
@@ -568,16 +641,18 @@ public class Main {
 		counselApplication.setDateOfSecond(date2);
 		counselApplication.setCategory(category);
 		counselApplication.setRequirement(requirement);
-			counsel.setCustomerID(customerId);
-		counsel.setRequirement(requirement);
+		counsel.setCustomerID(customerId);
+		
 		System.out.println("제출하겠습니까? (Y/N)");
 		String save = inputReader.readLine().trim();
 		if (save.equals("Y") || save.equals("y")) {
 			boolean isAddedCounselApp = counselApplicationList.add(counselApplication);
-			if (isAddedCounselApp) System.out.println("저장되었습니다.");
+			boolean isAddedCounsel = counselList.add(counsel);
+			if (isAddedCounselApp && isAddedCounsel) System.out.println("저장되었습니다.");
 			else System.out.println("저장되지 않았습니다.");	
 		}
 	}
+
 
 	private static void showfMaturityList(BufferedReader inputReader, ContractList contractListImpl,
 			CustomerList customerList, FamilyHistoryList familyHistoryListImpl,
@@ -651,22 +726,34 @@ public class Main {
 		}
 		return null;
 	}
-
 	private static void showResurrectContracts(ArrayList<Customer> customerList) {
-		System.out.println("부활 대상자 리스트");
-		for (Customer customer : customerList) {
-			System.out.println("아이디: " + customer.getCustomerID() + ", 이름: " + customer.getCustomerName() + ", 성별: "
-					+ customer.getEGender().getGenderStr());
-		}
+	    System.out.println("===============================");
+	    System.out.println("       부활 대상자 리스트      ");
+	    System.out.println("===============================");
+
+	    System.out.printf("%-10s %-15s %-5s%n", "아이디", "이름", "성별");
+	    System.out.println("===============================");
+
+	    for (Customer customer : customerList) {
+	        System.out.printf("%-10s %-15s %-5s%n", customer.getCustomerID(), customer.getCustomerName(),
+	                customer.getEGender().getGenderStr());
+	    }
 	}
 
 	private static void showExpiredContracts(ArrayList<Customer> customerList) {
-		System.out.println("만기 계약자 리스트");
-		for (Customer customer : customerList) {
-			System.out.println("아이디: " + customer.getCustomerID() + ", 이름: " + customer.getCustomerName() + ", 성별: "
-					+ customer.getEGender().getGenderStr());
-		}
+	    System.out.println("===============================");
+	    System.out.println("        만기 계약자 리스트       ");
+	    System.out.println("===============================");
+
+	    System.out.printf("%-10s %-15s %-5s%n", "아이디", "이름", "성별");
+	    System.out.println("===============================");
+
+	    for (Customer customer : customerList) {
+	        System.out.printf("%-10s %-15s %-5s%n", customer.getCustomerID(), customer.getCustomerName(),
+	                customer.getEGender().getGenderStr());
+	    }
 	}
+
 
 	private static void showUnPaidContracts(ArrayList<Customer> customerList) {
 		System.out.println("미납 대상자 리스트");
@@ -699,87 +786,119 @@ public class Main {
 		String id = inputReader.readLine().trim();
 		return customerListImpl.retrieveCustomerFromResurrect(id);
 	}
-
 	private static void showCustomerList(CustomerList customerListImpl, BufferedReader inputReader,
-			FamilyHistoryList familyHistoryListImpl, ContractList contractListImpl,
-			InsuranceList insuranceList, PaymentList paymentListImpl,
-			CompensationClaimList compensationClaimList) throws Exception {
-		// TODO Auto-generated method stub
-		System.out.println("고객 조회 메뉴입니다.");
-		System.out.println("1. 고객 정보 조회");
-		System.out.println("2. 계약 유지 대상자 조회");
-		String userChoice = "";
-		userChoice = inputReader.readLine().trim();
-		switch (userChoice) {
-		case "1":
-			System.out.println("[고객 정보 조회]");
-			do {
-				userChoice = inputCustomerId(inputReader); // 아이디 받아옴
-				if (userChoice.equals(""))
-					System.out.println("조건을 기입했는지 체크해주세요.");
-			} while (userChoice.equals(""));
-			String id = userChoice;
-			Customer customer = customerListImpl.retrieveCustomer(id); // 아이디에 따른 고객정보 받아옴
-			if (customer == null) {
-				System.out.println("조건에 맞는 고객 정보가 하나도 없습니다.\n조건을 확인해주세요.");
-				return;
-			}
-			showCustomerInfo(customer); // id 이름 생일 성별
-			boolean isRetrieveDetail = getCustomerDetails(inputReader); // 세부정보 읽을지 확인
-			if (isRetrieveDetail)
-				showCustomerDetailInfos(customer, familyHistoryListImpl, contractListImpl, insuranceList); // 고객 세부정보 출력
-			else
-				return;
-			if (inputDelOrUpd(inputReader)) {
-				customerListImpl.delete(id); // 삭제 or 업뎃 여부 입력 후 해당 고객 삭제
-				System.out.println("고객 정보가 삭제되었습니다.");
-			} else
-				customerListImpl.update(getUpdatedCustomer(inputReader), id); // 고객 정보 입력 받아서 해당 고객 업데이트
-			break;
-		case "2":
-			System.out.println("[계약 유지 대상자 조회]");
-			showfMaturityList(inputReader, contractListImpl, customerListImpl, familyHistoryListImpl, insuranceList,
-				paymentListImpl, compensationClaimList);
-			break;
-        	}
-	}
+	        FamilyHistoryList familyHistoryListImpl, ContractList contractListImpl,
+	        InsuranceList insuranceList, PaymentList paymentListImpl,
+	        CompensationClaimList compensationClaimList) throws Exception {
+	    System.out.println("==================================");
+	    System.out.println("           고객 조회 메뉴           ");
+	    System.out.println("==================================");
+	    System.out.println("1. 고객 정보 조회");
+	    System.out.println("2. 계약 유지 대상자 조회");
+	    System.out.println("----------------------------------");
 
-	private static boolean inputDelOrUpd(BufferedReader inputReader) throws IOException { // 세부정보 삭제(T) or 업뎃(F) 입력
-		System.out.println("문구를 선택해 주세요");
-		System.out.print("1. 세부정보 삭제, 2. 세부정보 수정 : ");
-		return inputReader.readLine().trim().toLowerCase().equals("1");
+	    String userChoice = "";
+	    userChoice = inputReader.readLine().trim();
+
+	    switch (userChoice) {
+	        case "1":
+	            System.out.println("==================================");
+	            System.out.println("         [고객 정보 조회]           ");
+	            System.out.println("==================================");
+
+	            do {
+	                userChoice = inputCustomerId(inputReader); // 아이디 받아옴
+	                if (userChoice.equals(""))
+	                    System.out.println("조건을 기입했는지 체크해주세요.");
+	            } while (userChoice.equals(""));
+
+	            String id = userChoice;
+	            Customer customer = customerListImpl.retrieveCustomer(id); // 아이디에 따른 고객정보 받아옴
+
+	            if (customer == null) {
+	                System.out.println("조건에 맞는 고객 정보가 하나도 없습니다.\n조건을 확인해주세요.");
+	                return;
+	            }
+
+	            showCustomerInfo(customer); // id 이름 생일 성별
+
+	            boolean isRetrieveDetail = getCustomerDetails(inputReader); // 세부정보 읽을지 확인
+
+	            if (isRetrieveDetail)
+	                showCustomerDetailInfos(customer, familyHistoryListImpl, contractListImpl, insuranceList); // 고객 세부정보 출력
+	            else
+	                return;
+
+	            if (inputDelOrUpd(inputReader)) {
+	                customerListImpl.delete(id); // 삭제 or 업뎃 여부 입력 후 해당 고객 삭제
+	                System.out.println("고객 정보가 삭제되었습니다.");
+	            } else
+	                customerListImpl.update(getUpdatedCustomer(inputReader), id); // 고객 정보 입력 받아서 해당 고객 업데이트
+
+	            break;
+
+	        case "2":
+	            System.out.println("==================================");
+	            System.out.println("     [계약 유지 대상자 조회]      ");
+	            System.out.println("==================================");
+
+	            showfMaturityList(inputReader, contractListImpl, customerListImpl, familyHistoryListImpl, insuranceList,
+	                    paymentListImpl, compensationClaimList);
+	            break;
+	    }
+	}
+	private static boolean inputDelOrUpd(BufferedReader inputReader) throws IOException {
+	    System.out.println("==========================");
+	    System.out.println("   세부정보 수정 및 삭제   ");
+	    System.out.println("==========================");
+	    System.out.println("1. 세부정보 삭제");
+	    System.out.println("2. 세부정보 수정");
+	    System.out.println("--------------------------");
+	    System.out.print("문구를 선택해 주세요: ");
+	    return inputReader.readLine().trim().toLowerCase().equals("1");
 	}
 
 	private static Customer getUpdatedCustomer(BufferedReader inputReader) throws IOException {
-		Customer upCustomer = new Customer();
-		System.out.println("수정할 정보를 입력해 주세요");
-		System.out.print("고객 ID : ");
-		upCustomer.setCustomerID(inputReader.readLine().trim());
-		System.out.print("고객 이름 : ");
-		upCustomer.setCustomerName(inputReader.readLine().trim());
-		System.out.print("고객 성별(남/여) : ");
-		upCustomer.setEGender(inputReader.readLine().trim().equals("남") ? EGender.male : EGender.female);
-		System.out.print("고객 생년월일 : ");
-		upCustomer.setBirth(inputReader.readLine().trim());
-		System.out.print("고객 전화번호 : ");
-		upCustomer.setPnumber(inputReader.readLine().trim());
-		System.out.print("고객 주소 : ");
-		upCustomer.setAddress(inputReader.readLine().trim());
-		System.out.print("고객 직업 : ");
-		upCustomer.setJob(inputReader.readLine().trim());
-		return upCustomer;
+	    Customer upCustomer = new Customer();
+	    System.out.println("=============================");
+	    System.out.println("      고객 정보 수정하기      ");
+	    System.out.println("=============================");
+	    System.out.print("고객 ID: ");
+	    upCustomer.setCustomerID(inputReader.readLine().trim());
+	    System.out.print("고객 이름: ");
+	    upCustomer.setCustomerName(inputReader.readLine().trim());
+	    System.out.print("고객 성별(남/여): ");
+	    upCustomer.setEGender(inputReader.readLine().trim().equals("남") ? EGender.male : EGender.female);
+	    System.out.print("고객 생년월일: ");
+	    upCustomer.setBirth(inputReader.readLine().trim());
+	    System.out.print("고객 전화번호: ");
+	    upCustomer.setPnumber(inputReader.readLine().trim());
+	    System.out.print("고객 주소: ");
+	    upCustomer.setAddress(inputReader.readLine().trim());
+	    System.out.print("고객 직업: ");
+	    upCustomer.setJob(inputReader.readLine().trim());
+	    return upCustomer;
 	}
+
 
 	private static void showCustomerDetailInfos(Customer customer, FamilyHistoryList familyHistoryListImpl,
 			ContractList contractListImpl, InsuranceList insuranceList) throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("\n[고객 세부 정보]");
+		System.out.println("===============================");
+	    System.out.println("        고객 세부 정보         ");
+	    System.out.println("===============================");
+	    System.out.println("[고객 기본 정보]");
 		showCustomerInfo(customer); // 고객 ID, 이름, 생일, 성별
+		System.out.println();
+		System.out.println("[추가 정보]");
 		showCustomerInfoDetail(customer); // 전번 주소 직업
+		  System.out.println();
+		    System.out.println("[가족력 정보]");
 		showFamilyHistory(
 				familyHistoryListImpl.getFamilyHistoryFromId(customer.getCustomerID()));
 		// 가족력 리스트(질환명,가족관계)
-		
+		  System.out.println();
+		    System.out.println("[계약 및 보험 정보]");
 		List<Contract> selectedContracts = new ArrayList<Contract>();
 		ArrayList<Contract> contracts = contractListImpl.retrieve();
 		for (Contract contract : contracts) {
@@ -798,54 +917,73 @@ public class Main {
 	}
 
 	private static void showInsuranceList(List<Contract> contracts, List<Insurance> insurances) {
-		for (Contract contract : contracts) {
-			Insurance selectedInsurance = null;
-			for (Insurance insurance : insurances) {
-				selectedInsurance = insurance;
-			}
-			System.out.println("보험명 : " + selectedInsurance.getInsuranceName());
-			System.out.println("만기 여부 : " + (contract.isMaturity() ? "예" : "아니오"));
-			System.out.println("해지여부 : " + (contract.isCancellation() ? "예" : "아니오"));
-			System.out.println("부활 여부 : " + (contract.isResurrection() ? "예" : "아니오") + "\n");
-		}
-
+	    System.out.println("========================================");
+	    System.out.println("         계약 및 보험 정보                ");
+	    System.out.println("========================================");
+	    System.out.printf("%-15s %-12s %-12s %-12s%n", "보험명", "만기 여부", "해지 여부", "부활 여부");
+	    System.out.println("----------------------------------------");
+	    
+	    for (Contract contract : contracts) {
+	        Insurance selectedInsurance = null;
+	        for (Insurance insurance : insurances) {
+	            if (contract.getInsuranceID().equals(insurance.getInsuranceID())) {
+	                selectedInsurance = insurance;
+	                break;
+	            }
+	        }
+	        
+	        System.out.printf("%-15s %-12s %-12s %-12s%n",
+	                selectedInsurance.getInsuranceName(),
+	                (contract.isMaturity() ? "예" : "아니오"),
+	                (contract.isCancellation() ? "예" : "아니오"),
+	                (contract.isResurrection() ? "예" : "아니오"));
+	    }
 	}
 
 	private static void showFamilyHistory(FamilyHistory familyHistory) {
-		System.out.println("질환명 : " + familyHistory.getDiseaseName());
-		System.out.println("가족관계 : " + familyHistory.getRelationship());
+	    System.out.println("==============================");
+	    System.out.println("         가족력 정보         ");
+	    System.out.println("==============================");
+	    System.out.printf("%-15s %-15s%n", "질환명", "가족관계");
+	    System.out.println("-----------------------------");
+	    System.out.printf("%-15s %-15s%n", familyHistory.getDiseaseName(), familyHistory.getRelationship());
 	}
-
 	private static boolean getCustomerDetails(BufferedReader inputReader) throws IOException {
-		// 세부정보 조회 여부 확인
-		System.out.println("고객 세부정보를 조회하겠습니까?");
-		System.out.print("세부 정보 조회를 희망하시면 Yes 입력해주시고 아니면 No 입력해주세요 ");
-		return inputReader.readLine().trim().toLowerCase().equals("yes");
+	    System.out.println("===============================");
+	    System.out.println("     고객 세부정보 조회 여부     ");
+	    System.out.println("===============================");
+	    System.out.println("고객 세부정보를 조회하시겠습니까?");
+	    System.out.println("세부 정보 조회를 희망하시면 Yes 입력해주세요");
+	    System.out.println("그렇지 않으시면 No 입력해주세요");
+	    System.out.println("---------------------------------");
+	    System.out.print("입력: ");
+	    return inputReader.readLine().trim().toLowerCase().equals("yes");
 	}
-
 	private static void showCustomerInfo(Customer customer) {
-		// TODO Auto-generated method stub
-		// 선택 고객 정보 표시
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("아이디 : " + customer.getCustomerID());
-		buffer.append("\n이름 : " + customer.getCustomerName());
-		buffer.append("\n생년월일 : " + customer.getBirth());
-		buffer.append("\n성별 : " + customer.getEGender().getGenderStr()); // 성별 : male 혹은 남
-		System.out.println(buffer.toString());
+	    System.out.println("===============================");
+	    System.out.println("         고객 정보 조회         ");
+	    System.out.println("===============================");
+	    System.out.printf("%-10s %-10s%n", "아이디", customer.getCustomerID());
+	    System.out.printf("%-10s %-10s%n", "이름", customer.getCustomerName());
+	    System.out.printf("%-10s %-10s%n", "생년월일", customer.getBirth());
+	    System.out.printf("%-10s %-10s%n", "성별", customer.getEGender().getGenderStr());
+	}
+	private static void showCustomerInfoDetail(Customer customer) {
+	    System.out.println("===============================");
+	    System.out.println("       추가 정보 조회          ");
+	    System.out.println("===============================");
+	    System.out.printf("%-12s %-12s%n", "전화 번호", customer.getPnumber());
+	    System.out.printf("%-12s %-12s%n", "주소", customer.getAddress());
+	    System.out.printf("%-12s %-12s%n", "직업", customer.getJob());
 	}
 
-	private static void showCustomerInfoDetail(Customer customer) {
-		// TODO Auto-generated method stub
-		// 선택 고객 정보 표시
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("전화 번호 : " + customer.getPnumber());
-		buffer.append("\n주소 : " + customer.getAddress());
-		buffer.append("\n직업 : " + customer.getJob());
-		System.out.println(buffer.toString());
-	}
 
 	private static String inputCustomerId(BufferedReader inputReader) throws IOException {
 		System.out.print("고객 아이디를 입력해 주세요 : ");
+		return inputReader.readLine().trim();
+	}
+	private static String inputCounselId(BufferedReader inputReader) throws IOException {
+		System.out.print("상담 아이디를 입력해 주세요 : ");
 		return inputReader.readLine().trim();
 	}
 
@@ -916,10 +1054,9 @@ public class Main {
 		case "1":
 			createSurvey(compensationClaimList, carAccidentList, surveyList, insuranceList, inputReader);
 			break;
+
 		}
 	}
-
-
 	private static void showList(ArrayList<?> dataList) {
 		String list = "";
 		for (int i = 0; i < dataList.size(); i++) {
@@ -927,8 +1064,6 @@ public class Main {
 		}
 		System.out.println(list);
 	}
-
-
 	private static void createSurvey(CompensationClaimList compensationClaimList, CarAccidentList carAccidentList, SurveyList surveyList,
 			InsuranceList insuranceList, BufferedReader inputReader) throws Exception {
 		Survey survey = new Survey();
@@ -1033,7 +1168,6 @@ public class Main {
 	}
 
 
-
 	private static void createTerms(TermsList termsListImpl, BufferedReader inputReader) throws Exception {
 
 		Terms terms = new Terms();
@@ -1074,7 +1208,6 @@ public class Main {
 			else System.out.println("잘못된 선택지입니다.");}
 	}
 	
-
 	private static void requestAuthorization(InsuranceList insuranceListImpl, BufferedReader inputReader, GuaranteeList guaranteeList, TermsList termsList)
 			throws IOException {
 		System.out.println("****************** 인가 요청 화면 *******************");
@@ -1086,8 +1219,7 @@ public class Main {
 		System.out.print("선택 : ");
 		String insuranceID = inputReader.readLine().trim();
 		if (!insuranceID.equals("x") && !insuranceID.equals(null)) {
-			
-			Insurance insurance = insuranceListImpl.getInsurancebyId(insuranceID);
+        Insurance insurance = insuranceListImpl.getInsurancebyId(insuranceID);
 			
 			System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 			+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: "
@@ -1128,7 +1260,7 @@ public class Main {
 			System.out.print("선택 : ");
 			String insuranceID = inputReader.readLine().trim();
 			if (!insuranceID.equals("x") && !insuranceID.equals(null)) {
-				Insurance insurance = insuranceListImpl.getInsurancebyId(insuranceID);
+	        Insurance insurance = insuranceListImpl.getInsurancebyId(insuranceID);
 				
 				System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 				+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: "
@@ -1459,7 +1591,7 @@ public class Main {
 		else System.out.println("Y/N 중 하나를 입력해야합니다.");}
 	}
 
-	
+
 
 	private static void showMenu() {
 		System.out.println("\n****************** Initial Menu *******************");

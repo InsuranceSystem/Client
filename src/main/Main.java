@@ -3,6 +3,7 @@ package main;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.Buffer;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.text.ParseException;
@@ -909,22 +910,92 @@ public class Main {
 		System.out.println("****************** Compensation Claim List *******************");
 		System.out.println("청구ID 보험ID 고객ID 접수자명 접수자전화번호 보험계약자와의 관계 구비서류파일경로 은행 계좌번호 예금주명");
 		showList(compensationClaimList.retrieve());
-		System.out.println("1. 손해사정");
-		String userChoice = "";
-		userChoice = inputReader.readLine().trim();
+		System.out.println("손해사정 내용을 조회하시겠습니까? (Y/N)");
+		String userChoice = inputReader.readLine().trim();
 		switch (userChoice) {
-		case "1":
-			createSurvey(compensationClaimList, carAccidentList, surveyList, insuranceList, inputReader);
+		case "Y":
+				System.out.println("청구ID를 입력하세요: ");
+				String inputCCID = inputReader.readLine().trim();
+				if (compensationClaimList.getCompensationClaimbyID(inputCCID) == null)
+					System.out.println("존재하지 않는 ID입니다");
+				else retrieveSurvey(compensationClaimList, carAccidentList, surveyList, insuranceList, inputCCID, inputReader);
+			break;
+		case "N":
+			System.out.println("초기화면으로 돌아갑니다.");
 			break;
 		}
 	}
 
+	private static void retrieveSurvey(CompensationClaimList compensationClaimList, CarAccidentList carAccidentList, SurveyList surveyList, InsuranceList insuranceList, String CCID, BufferedReader inputReader) throws Exception {
+		Survey survey = surveyList.getSurveyByID(CCID);
+		if(!(survey == null)){
+			System.out.println("청구ID: " + survey.getCCID() + "\n담당자명:" + survey.getManagerName() + "\n조사보고서: " + survey.getReportFilePath()
+					+ "\n손해사정료: " + survey.getSurveyFee() + "\n결정보험금: " + survey.getDecisionMoney() + "\n면/부책(면책:false, 부책:true): "
+			+ survey.isResponsibility() + "\n면/부책 사유: " + survey.getResponsibilityReason());
+			System.out.println("1. 손해사정 데이터 수정\n2. 결정보험금 지급하기");
+			switch(inputReader.readLine().trim()){
+				case "1":
+					updateSurvey(surveyList, survey, inputReader);
+					break;
+				case "2":
+					requestBanking();
+					surveyList.deleteById(survey.getCCID());
+					break;}
+		} else {
+			System.out.println("손해사정된 내용이 없습니다. 손해사정 데이터를 입력하시겠습니까? (Y/N)");
+			switch(inputReader.readLine().trim()){
+				case "Y":
+					createSurvey(compensationClaimList, carAccidentList, surveyList, insuranceList, CCID, inputReader);
+					break;
+				case "N":
+					System.out.println("초기화면으로 돌아갑니다.");
+					break;}
+		}
+	}
+
+	private static void updateSurvey(SurveyList surveyList, Survey survey, BufferedReader inputReader) throws Exception {
+		String choice = "";
+		System.out.println("수정할 정보를 선택하고 내용을 입력하세요.");
+		System.out.println("1. 담당자명, 2. 조사보고서 업로드, 3. 손해사정료, 4. 결정보험금, 5. 면/부책(면책:false, 부책:true), 6. 면/부책 사유");
+		System.out.print("수정할 정보 : ");
+		choice = inputReader.readLine().trim();
+		System.out.print("수정할 내용 :");
+		String content = inputReader.readLine().trim();
+		switch (choice) {
+			case ("1"):
+				survey.setManagerName(content);
+				break;
+			case ("2"):
+				survey.setReportFilePath(content);
+				break;
+			case ("3"):
+				if (isInteger(content)) survey.setSurveyFee(Integer.valueOf(content));
+				else System.out.println("숫자로 입력되지 않아 수정이 저장되지 않았습니다.");
+				break;
+			case ("4"):
+				if (isInteger(content)) survey.setDecisionMoney(Integer.valueOf(content));
+				else System.out.println("숫자로 입력되지 않아 수정이 저장되지 않았습니다.");
+				break;
+			case ("5"):
+				if (content.equals("true")) survey.setResponsibility(Boolean.parseBoolean(content));
+				else if (content.equals("false")) survey.setResponsibility(Boolean.parseBoolean(content));
+				else System.out.println("true또는 false로 입력되지 않아 수정이 저장되지 않았습니다.");
+				break;
+			case ("6"):
+				survey.setResponsibilityReason(content);
+				break;
+			default:
+				System.out.println("올바르지 않은 선택지입니다.");
+		}
+		if (surveyList.updateSurvey(survey)) System.out.println("수정이 저장되었습니다.");
+		else System.out.println("수정에 실패했습니다.");
+}
+
 	private static void createSurvey(CompensationClaimList compensationClaimList, CarAccidentList carAccidentList, SurveyList surveyList,
-			InsuranceList insuranceList, BufferedReader inputReader) throws Exception {
+			InsuranceList insuranceList, String CCID, BufferedReader inputReader) throws Exception {
 		Survey survey = new Survey();
 		System.out.println("****************** Survey *******************");
-		System.out.println("손해사정할 청구ID를 입력하세요: ");
-		survey.setCCID(inputReader.readLine().trim());
+		survey.setCCID(CCID);
 		CompensationClaim compensationClaim = compensationClaimList.getCompensationClaimbyID(survey.getCCID());
 		System.out.print("담당자명: ");
 		survey.setManagerName(inputReader.readLine().trim());
@@ -939,8 +1010,8 @@ public class Main {
 		System.out.print("면/부책 사유 : ");
 		survey.setResponsibilityReason(inputReader.readLine().trim());
 		if (surveyList.createSurvey(survey)) {
-			System.out.println("수정이 완료되었습니다.");
-			System.out.println("결정보험금(" + survey.getDecisionMoney() + "원)을 지급요청하려면 Y를 누르십시오");
+			System.out.println("입력이 완료되었습니다.");
+			System.out.println("결정보험금(" + survey.getDecisionMoney() + "원)을 지급요청하시겠습니까? (Y/N)");
 			if (inputReader.readLine().trim().equals("Y")){
 				System.out.println(
 						compensationClaim.getReceptionistName() + " " + compensationClaim.getReceptionistPNumber() + " "
@@ -954,7 +1025,7 @@ public class Main {
 						carAccidentList.delete(carAccident.getCCID());
 					}
 				}
-			}
+			} else System.out.println("초기화면으로 돌아갑니다.");
 		} else
 			System.out.println("신청에 실패하였습니다. 다시 시도해주십시오.");
 	}
@@ -1121,13 +1192,14 @@ public class Main {
 			else if (insuranceType.equals("6")) showList(insuranceListImpl.retrieveInsurance("Property"));
 			else if (!insuranceType.equals("x")) System.out.println("잘못된 선택지입니다.");
 			else if (insuranceType.equals("x")) break;
-			if (who.equals("Customer")) {
+			if (who.equals("Customer") && (Integer.parseInt(insuranceType)>=1 && Integer.parseInt(insuranceType)<=6) {
 				System.out.println("보험 신청 메뉴로 이동하시겠습니까? (Y/N)");
 				String choice = inputReader.readLine().trim();
 				if (choice.equals("Y") || choice.equals("y")) {
+					System.out.println("----------- 보험 가입 화면 ------------");
 					System.out.println("가입 신청할 보험ID를 입력하세요");
 					Insurance insurance = insuranceListImpl.retrieveInsuranceDetail(inputReader.readLine().trim());
-					System.out.println("********** 보험 정보 **********");
+					System.out.println("------------- 보험 정보 --------------");
 					System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 							+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: "
 							+ insurance.getPeriodOfInsurance() + "\n납입기간: " + insurance.getPaymentPeriod() + "\n가입나이: "
@@ -1156,7 +1228,7 @@ public class Main {
 		InsuranceApplication insuranceApplication = new InsuranceApplication();
 		insuranceApplication.setInsuranceID(insurance.getInsuranceID());
 		insuranceApplication.setCreatedAt(LocalDate.now());
-		System.out.println("****************** Insurance Application *******************");
+		System.out.println("----------- 입력 화면 ------------");
 		System.out.println("고객ID를 입력해주세요");
 		Customer customer = customerList.getCustomerByID(inputReader.readLine().trim());
 		insuranceApplication.setCustomerID(customer.getCustomerID());
@@ -1180,7 +1252,7 @@ public class Main {
 
 	private static boolean showTermsAndConditions(Customer customer, Insurance insurance,
 			InsuranceApplication insuranceApplication, FamilyHistoryList familyHistoryList,
-			GuaranteeList guaranteeList, TermsList termsList, BufferedReader inputReader) throws IOException {
+			GuaranteeList guaranteeList, TermsList termsList, BufferedReader inputReader) throws Exception {
 		System.out.println("********** 보험 약관 안내 **********");
 		System.out.println("--------보험 정보--------");
 

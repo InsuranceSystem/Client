@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public interface CarAccidentList extends Remote{
 
-	CarAccident getCarAccidentByID(String ccid) throws RemoteException;
+	CarAccident getCarAccidentByID(String ccid) throws Exception, RemoteException;
 
 	boolean add() throws RemoteException;
 

@@ -128,48 +128,47 @@ public class Main {
 							customerListImpl, inputReader);
 					break;
 				case "2":
-					retrieveCompensationClaim(insuranceList, compensationClaimList, carAccidentList, surveyList,
-							inputReader);
-					break;
-				case "3":
 					showOnSaleInsurance(insuranceList, insuranceApplicationList, customerListImpl,
 							familyHistoryListImpl, guaranteeList, termsListImpl, inputReader, "Customer");
-					break;
-				case "4":
-					designInsurance(insuranceList, termsListImpl, customerListImpl, familyHistoryListImpl,
-							guaranteeList, inputReader, insuranceApplicationList);
-					break;
-				case "5":
-					showCustomerList(customerListImpl, inputReader, familyHistoryListImpl, contractListImpl,
-							insuranceList, paymentListImpl, compensationClaimList);
-					break;
-				case "6":
+					break;		
+				case "3":
 					showCouncel(inputReader, counselApplicationListImpl, counselListImpl, customerListImpl);
 					break;
-				case "7":
-					showManageConsultation(inputReader, counselListImpl, customerListImpl, counselApplicationListImpl);
-					break;
-				case "8":
-					showInsuranceApplicationList(contractListImpl, insuranceApplicationList, insuranceList,
-							customerListImpl, familyHistoryListImpl, inputReader);
-					break;
-				case "9":
+				case "4":
 					showSubscriptionInsurance(inputReader, contractListImpl, customerListImpl, insuranceList,
 							compensationClaimList, paymentListImpl);
 					break;
-				case "10":
-					// 추후 수정 - 계약유지대상자 조회 하면에서 '만기 계약자 조회 메뉴' 클릭 시 이동하는 곳
-					showPaymentManagement(inputReader, customerListImpl, contractListImpl, paymentListImpl,
-							insuranceList);
-					break;
-				case "11":
+				case "5":
 					// 보함료 조회/납부
 					showInsurancePayment(inputReader, customerListImpl, contractListImpl, paymentListImpl,
 							insuranceList);
 					break;
+				case "6":
+					showCustomerList(customerListImpl, inputReader, familyHistoryListImpl, contractListImpl,
+							insuranceList, paymentListImpl, compensationClaimList);
+					break;
+				case "7":
+					retrieveCompensationClaim(insuranceList, compensationClaimList, carAccidentList, surveyList,
+							inputReader);
+					break;			
+				case "8":
+					designInsurance(insuranceList, termsListImpl, customerListImpl, familyHistoryListImpl,
+							guaranteeList, inputReader, insuranceApplicationList);
+					break;				
+				case "9":
+					showManageConsultation(inputReader, counselListImpl, customerListImpl, counselApplicationListImpl);
+					break;
+				case "10":
+					showInsuranceApplicationList(contractListImpl, insuranceApplicationList, insuranceList,
+							customerListImpl, familyHistoryListImpl, inputReader);
+					break;				
+				case "11":
+					// 추후 수정 - 계약유지대상자 조회 하면에서 '만기 계약자 조회 메뉴' 클릭 시 이동하는 곳
+					showPaymentManagement(inputReader, customerListImpl, contractListImpl, paymentListImpl,
+							insuranceList);
+					break;			
 				case "x":
 					break;
-
 				default:
 					System.out.println("잘못된 선택지입니다.");
 
@@ -201,6 +200,24 @@ public class Main {
 			System.out.println("문제가 지속되면 관리자에게 문의하여 도움을 받으세요.");
 		}
 
+	}
+	
+	private static void showMenu() {
+		System.out.println("\n****************** 보험사 초기 화면 *******************");
+		System.out.println("==========고객용=========");
+		System.out.println("1. 보험금 청구");
+		System.out.println("2. 보험 조회");
+		System.out.println("3. 고객 상담 신청");
+		System.out.println("4. 내 보험 확인");
+		System.out.println("5. 보험료 조회/납부");
+		System.out.println("==========직원용=========");
+		System.out.println("6. 고객 조회");
+		System.out.println("7. 보험금 청구 내역");
+		System.out.println("8. 보험 설계");
+		System.out.println("9. 상담 정보 관리");
+		System.out.println("10. 보험 가입 신청 내역");
+		System.out.println("11. 납입 관리 메뉴");
+		System.out.println("x. Exit");
 	}
 
 	private static void showInsuranceApplicationList(ContractList contractList,
@@ -1509,7 +1526,8 @@ public class Main {
 				System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 						+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: " + insurance.getPeriodOfInsurance()
 						+ "\n납입기간: " + insurance.getPaymentPeriod() + "\n가입나이: " + insurance.getAgeOfTarget()
-						+ "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(보통약관):");
+						+ "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(보통약관)");
+
 				ArrayList<Guarantee> guarantees = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID());
 				for (int i = 0; i < guarantees.size(); i++) {
 					Guarantee guaranteeByIID = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID()).get(i);
@@ -1757,21 +1775,7 @@ public class Main {
 		}
 	}
 
-	private static void showMenu() {
-		System.out.println("\n****************** Initial Menu *******************");
-		System.out.println("1. 보험금 청구");
-		System.out.println("2. 보험금 청구 내역(직원용)");
-		System.out.println("3. 보험 조회");
-		System.out.println("4. 보험 설계(직원용)");
-		System.out.println("5. 고객 조회");
-		System.out.println("6. 고객 상담 신청");
-		System.out.println("7. 상담 정보 관리");
-		System.out.println("8. 보험 가입 신청 내역");
-		System.out.println("9. 내 보험 확인");
-		System.out.println("10. 납입 관리 메뉴 ");
-		System.out.println("11. 보험료 조회/납부");
-		System.out.println("x. Exit");
-	}
+
 
 	// uc17) 가입된 보험을 조회한다.
 	private static void showSubscriptionInsurance(BufferedReader inputReader, ContractList contractListImpl,

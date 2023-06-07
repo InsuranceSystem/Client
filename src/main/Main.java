@@ -1427,17 +1427,11 @@ public class Main {
 		insuranceApplication.setPaymentCycle(inputReader.readLine().trim());
 		System.out.print("청약서 업로드: ");
 		insuranceApplication.setSubscriptionFilePath(inputReader.readLine().trim());
-		if (showTermsAndConditions(customer, insurance, insuranceApplication, familyHistoryList, guaranteeList,
-				termsList, inputReader)) {
-			if (insuranceApplicationList.createInsuranceApplication(insuranceApplication)) {
-				System.out.println("신청이 완료되었습니다. 심사 결과에 따라 최대보장한도 또는 보험료가 제한되거나 가입이 불가능할 수 있습니다.");
-			} else
-				System.out.println("신청에 실패하였습니다. 다시 시도해주십시오.");
-		} else
-			System.out.println("약관에 동의하지 않으면 가입 신청이 불가능합니다. 약관을 읽고 동의란에 체크해주세요");
+		showTermsAndConditions(customer, insurance, insuranceApplicationList, insuranceApplication, familyHistoryList, guaranteeList,
+				termsList, inputReader);
 	}
 
-	private static boolean showTermsAndConditions(Customer customer, Insurance insurance,
+	private static void showTermsAndConditions(Customer customer, Insurance insurance, InsuranceApplicationList insuranceApplicationList,
 			InsuranceApplication insuranceApplication, FamilyHistoryList familyHistoryList,
 			GuaranteeList guaranteeList, TermsList termsList, BufferedReader inputReader) throws Exception {
 		System.out.println("********** 보험 약관 안내 **********");
@@ -1469,11 +1463,16 @@ public class Main {
 		System.out
 				.println("제1조(보험계약의 성립)\n" + "  ① 보험계약은 보험계약자의 청약과 보험회사의 승낙으로 이루어집니다...(생략)\n" + "제2조(약관교부 및 설명의무 등) \n"
 						+ "  ① 회사는 계약자가 청약한 경우 계약자에게 약관 및 계약자 보관용 청약서(청약서 부본)를 드리고 약관의 중요한 내용을 설명하여 드립니다...(이하생략)");
-		System.out.println("\n위 약관에 동의하십니까? (Y/N)");
-		if (inputReader.readLine().trim().equals("Y")) {
-			return true;
-		} else
-			return false;
+		System.out.println("\n위 약관에 동의하십니까? (Y/N)\n 동의하지 않을 경우 가입이 불가능합니다.");
+		if(inputReader.readLine().trim().equals("Y"))
+			if (insuranceApplicationList.createInsuranceApplication(insuranceApplication)) {
+				System.out.println("신청이 완료되었습니다. 심사 결과에 따라 최대보장한도 또는 보험료가 제한되거나 가입이 불가능할 수 있습니다.");
+			} else {
+				System.out.println("신청에 실패하였습니다. 다시 시도해주십시오.");
+			}
+		else if (inputReader.readLine().trim().equals("N")){
+			System.out.println("약관에 동의하지 않으면 가입 신청이 불가능합니다. 약관을 읽고 동의란에 체크해주세요");
+			}
 	}
 
 	private static void updateInsuranceDetail(InsuranceList insuranceListImpl, TermsList termsList, GuaranteeList guaranteeList, BufferedReader inputReader) throws Exception {

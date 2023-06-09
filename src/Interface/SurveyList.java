@@ -12,6 +12,9 @@ public interface SurveyList extends Remote{
 
     public ArrayList<Survey> retrieve() throws RemoteException;
 
-    boolean update(Survey updateSurvey) throws Exception ,RemoteException;
+    boolean updateSurvey(Survey updateSurvey) throws Exception ,RemoteException;
 
+    Survey getSurveyByID(String ccid) throws RemoteException;
+
+    boolean deleteById(String ccid) throws Exception, RemoteException;
 }

@@ -609,7 +609,6 @@ public class Main {
 		System.out.println("===============================");
 		// category, counselID,customerID, dateOfFirst,dateOfSecond,requirement
 		CounselApplication counselApplication = new CounselApplication();
-		Counsel counsel = new Counsel();
 		String customerId = null;
 		String dateStr1 = null;
 		String dateStr2 = null;
@@ -690,17 +689,13 @@ public class Main {
 		counselApplication.setDateOfSecond(date2);
 		counselApplication.setCategory(category);
 		counselApplication.setRequirement(requirement);
-		counsel.setCustomerID(customerId);
 
 		System.out.println("제출하겠습니까? (Y/N)");
 		String save = inputReader.readLine().trim();
 		if (save.equals("Y") || save.equals("y")) {
-			boolean isAddedCounselApp = counselApplicationList.add(counselApplication);
-			boolean isAddedCounsel = counselList.add(counsel);
-			if (isAddedCounselApp && isAddedCounsel)
+			if (counselApplicationList.update(counselApplication))
 				System.out.println("저장되었습니다.");
-			else
-				System.out.println("저장되지 않았습니다.");
+			else System.out.println("저장되지 않았습니다.");
 		}
 	}
 
@@ -881,8 +876,11 @@ public class Main {
 			if (inputDelOrUpd(inputReader)) {
 				customerListImpl.delete(id); // 삭제 or 업뎃 여부 입력 후 해당 고객 삭제
 				System.out.println("고객 정보가 삭제되었습니다.");
-			} else
-				customerListImpl.update(getUpdatedCustomer(inputReader), id); // 고객 정보 입력 받아서 해당 고객 업데이트
+			} else {
+				Customer newCustomer = getUpdatedCustomer(inputReader);
+				customerListImpl.update(newCustomer, id); 
+				// 고객 정보 입력 받아서 해당 고객 업데이트
+			}
 
 			break;
 
@@ -899,10 +897,10 @@ public class Main {
 
 	private static boolean inputDelOrUpd(BufferedReader inputReader) throws IOException {
 		System.out.println("==========================");
-		System.out.println("   세부정보 수정 및 삭제   ");
+		System.out.println("   고객 정보 수정 및 삭제   ");
 		System.out.println("==========================");
-		System.out.println("1. 세부정보 삭제");
-		System.out.println("2. 세부정보 수정");
+		System.out.println("1. 고객 정보 삭제");
+		System.out.println("2. 고객 정보 수정");
 		System.out.println("--------------------------");
 		System.out.print("문구를 선택해 주세요: ");
 		return inputReader.readLine().trim().toLowerCase().equals("1");
@@ -913,8 +911,6 @@ public class Main {
 		System.out.println("=============================");
 		System.out.println("      고객 정보 수정하기      ");
 		System.out.println("=============================");
-		System.out.print("고객 ID: ");
-		upCustomer.setCustomerID(inputReader.readLine().trim());
 		System.out.print("고객 이름: ");
 		upCustomer.setCustomerName(inputReader.readLine().trim());
 		System.out.print("고객 성별(남/여): ");
@@ -936,9 +932,6 @@ public class Main {
 		System.out.println("===============================");
 		System.out.println("        고객 세부 정보         ");
 		System.out.println("===============================");
-		System.out.println("[고객 기본 정보]");
-		showCustomerInfo(customer); // 고객 ID, 이름, 생일, 성별
-		System.out.println();
 		System.out.println("[추가 정보]");
 		showCustomerInfoDetail(customer); // 전번 주소 직업
 		System.out.println();

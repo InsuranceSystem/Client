@@ -880,6 +880,7 @@ public class Main {
 				Customer newCustomer = getUpdatedCustomer(inputReader);
 				customerListImpl.update(newCustomer, id); 
 				// 고객 정보 입력 받아서 해당 고객 업데이트
+				System.out.println("고객 정보가 저장되었습니다.");
 			}
 
 			break;

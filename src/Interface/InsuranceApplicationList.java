@@ -11,12 +11,12 @@ public interface InsuranceApplicationList extends Remote{
 
 	boolean delete(String applicationId) throws Exception,RemoteException;;
 
-	ArrayList<InsuranceApplication> retrieve()throws RemoteException;
+	ArrayList<InsuranceApplication> retrieve()throws Exception, RemoteException;
 
 	boolean update()throws RemoteException;
 
 	InsuranceApplication getApplicationbyId(String trim) throws RemoteException;
 
-	boolean updateInsuranceApplication(InsuranceApplication insuranceApplication) throws RemoteException;
+	boolean updateInsuranceApplication(InsuranceApplication insuranceApplication) throws RemoteException, Exception;
 
 }

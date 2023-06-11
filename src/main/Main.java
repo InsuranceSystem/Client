@@ -1922,29 +1922,12 @@ public class Main {
 		System.out.println("________________________________________\n");
 		System.out.printf("%-10s %-10s %-10s\n", centerAlign("[입력]", 10), centerAlign("[입력]", 10),
 				centerAlign("[Y/N]", 13));
-//			System.out.printf("\n\n[ %s 해지 화면 ]", insuranceStatus);
-//			System.out.println(
-//					"\n_____________________________________________________________________________________________");
-//			System.out.printf("\n%-10s %-10s %-10s %-10s %-10s\n", centerAlign("이름", 10), centerAlign("전화번호", 10),
-//					centerAlign("해지 약관 안내", 13), centerAlign("해지 약관 동의", 13), centerAlign("해지하기 버튼", 10));
-//			System.out.println(
-//					"_____________________________________________________________________________________________\n");
-//			System.out.printf("%-10s %-10s %-10s %-10s %-10s\n", centerAlign("[입력]", 10), centerAlign("[입력]", 10),
-//					centerAlign("[보기]", 15), centerAlign("[Y/N]", 15), centerAlign("[Y/N]", 13));
-
-//			System.out.print("\n\n• 해지 약관 안내 보기 (Y/N) : ");
-//			String choice = systemInput.readLine().trim();
-//			// A1. 해지 약관 안내를 누른 경우
-//			if (choice.equals("Y"))
-//				showTerminationPolicyMessage();
 
 		System.out.printf("\n\n[ %s 해지 정보 입력창 ]", insuranceStatus);
 		System.out.print("\n[ 이름 ] : ");
 		String inputName = systemInput.readLine().trim();
 		System.out.print("[ 전화번호 ] : ");
 		String inputPH = systemInput.readLine().trim();
-//			System.out.print("해지 약관 동의 (Y/N) : ");
-//			String inputAgree = systemInput.readLine().trim();
 		System.out.print("\n해당 보험을 해지하시겠습니까? (Y/N) : ");
 		String inputCancel = systemInput.readLine().trim();
 
@@ -1958,26 +1941,11 @@ public class Main {
 					compensationClaim, selectedInsuranceId, selectedCustomerId, totalPremiumPaid, insuranceName,
 					isMatured);
 		}
-//			if (inputName.equals(customerName) && inputPH.equals(customerPH) && inputAgree.equals("N"))
-//				// A3. 해지 약관 동의를 체크하지 않은 경우
-//				System.out.println("\n[System] 해지 약관에 동의하지 않을 경우 해지가 불가능합니다.");
-//			if (inputName.equals(customerName) && inputPH.equals(customerPH) && inputAgree.equals("Y")
-//					&& inputCancel.equals("Y")) {
-//				System.out.println("해지 환급금 요청 화면");
-//				requestTerminationRefund(insuranceStatus, customerName, customerPH, info, contractListImpl, systemInput,
-//						compensationClaim, selectedInsuranceId, selectedCustomerId, totalPremiumPaid, insuranceName,
-//						isMatured);
-//			}
 
 		if (inputName.equals(customerName) && inputPH.equals(customerPH) && inputCancel.equals("N"))
 			System.out.println("[System] 해지 요청을 취소합니다.");
 
 	}
-
-//		private static void showTerminationPolicyMessage() {
-//			// A1. 해지 약관 안내를 누른 경우
-	//
-//		}
 
 	// End Of uc18) 보험을 중도 해지한다. , uc19) 만기 보험을 해지하다.
 	// uc20) 해지환급금 지급을 요청한다.
@@ -2487,14 +2455,6 @@ public class Main {
 							}
 						}
 					}
-//					} else {
-//						// A4. 잘못된 납입상태변경버튼을 선택한 경우
-//						System.out.println("[System] 유효하지 않은 버튼 번호입니다.");
-//						// 다시 선택
-//						System.out.print("\n\n• 납입상태변경버튼 선택 (버튼 번호 입력 또는 q 입력하여 종료): ");
-//						paymentUpdateBtn = inputReader.readLine().trim();
-//					}
-
 					return;
 
 				} else {
@@ -2537,8 +2497,8 @@ public class Main {
 
 		System.out.println(
 				"_____________________________________________________________________________________________________________");
-		System.out.println(String.format("%10s%10s%10s%10s%10s%10s%10s%10s", "보험명", "보험구분", "납부여부", "보험료", "미납기간",
-				"미납금", "선택 버튼", "납부방법변경버튼"));
+		System.out.println(
+				String.format("%10s%10s%10s%10s%10s%10s%10s", "보험명", "보험구분", "납부여부", "보험료", "미납기간", "미납금", "선택 버튼"));
 		System.out.println(
 				"_____________________________________________________________________________________________________________");
 
@@ -2557,7 +2517,6 @@ public class Main {
 			for (Payment payment : customerPaymentInfo) {
 				if (payment.getInsuranceID().equals(insuranceId)) {
 					LocalDate paymentDate = payment.getDateOfPayment();
-					System.out.println(payment.getInsuranceID() + " " + payment.isWhetherPayment());
 					isPaid = payment.isWhetherPayment();
 					if (paymentDate != null) { // 입력된 날짜 값이 null이 아닌 경우에만 처리
 						Date paymentDateConverted = java.sql.Date.valueOf(paymentDate); // Date로 변환
@@ -2576,29 +2535,26 @@ public class Main {
 							} else {
 								unpaidAmount += insurance.getBasicPremium();
 							}
-
 						}
-
 						if (isPaid) {
 							unpaidAmount = 0;
 							unpaidDays = 0;
 						}
 
 					}
-
-					// 선택 버튼 및 납부 방법 변경 버튼 표시
-					String selectionButton = String.format("%02d", index);
-					String paymentButton = String.valueOf(10 + index);
-
-					// 결과 출력
-					System.out.println(String.format("%10s%10s%13s%13s%8s%14s%8s%10s", insurance.getInsuranceName(),
-							insurance.getType(), isPaid, insurance.getBasicPremium(), unpaidDays, unpaidAmount,
-							selectionButton, paymentButton));
-
-					index++;
-					unpaidAmount = 0; // 초기화
 				}
 			}
+			// 선택 버튼 및 납부 방법 변경 버튼 표시
+			String selectionButton = String.valueOf(20 + index);
+			String paymentButton = String.valueOf(10 + index);
+
+			// 결과 출력
+			System.out.println(String.format("%10s%10s%13s%13s%8s%14s%8s%10s", insurance.getInsuranceName(),
+					insurance.getType(), isPaid, insurance.getBasicPremium(), unpaidDays, unpaidAmount, selectionButton,
+					paymentButton));
+
+			index++;
+			unpaidAmount = 0; // 초기화
 
 		}
 
@@ -2606,10 +2562,10 @@ public class Main {
 		System.out.print("\n\n• 선택 버튼 입력 : ");
 		String selectionInput = inputReader.readLine().trim();
 
-		if (selectionInput.startsWith("0")) {
+		if (selectionInput.startsWith("2")) {
 			// 보험 선택 후 납입 (완납/일부납)
-			insurancePremiumPayment(inputReader, paymentListImpl, customerInsuranceInfo, customerPaymentInfo,
-					selectionInput);
+			insurancePremiumPayment(contractListImpl, inputReader, paymentListImpl, customerInsuranceInfo,
+					customerPaymentInfo, selectionInput);
 		} else if (selectionInput.startsWith("1")) {
 			// A2. 고객이 납부 방법 변경 버튼을 클릭할 경우
 			paymentMethodChange(selectionInput);
@@ -2619,83 +2575,100 @@ public class Main {
 
 	}
 
-	private static void insurancePremiumPayment(BufferedReader inputReader, PaymentList paymentListImpl,
-			ArrayList<Insurance> customerInsuranceInfo, ArrayList<Payment> customerPaymentInfo, String selectionInput)
-			throws IOException {
+	private static void insurancePremiumPayment(ContractList contractListImpl, BufferedReader inputReader,
+			PaymentList paymentListImpl, ArrayList<Insurance> customerInsuranceInfo,
+			ArrayList<Payment> customerPaymentInfo, String selectionInput) throws Exception {
 		// 버튼 값이 0으로 시작하는 경우 선택한 인덱스에 해당하는 정보 출력
-		int selectedIndex = Integer.parseInt(selectionInput);
+//		String selectedIndexString = ("2" + selectionInput);
+		int selectedIndex = Integer.parseInt(selectionInput) - 20;
 
-		if (selectedIndex >= 0 && selectedIndex < customerInsuranceInfo.size()) {
-			// 선택한 인덱스에 해당하는 정보 출력
-			System.out.println("\n_______________________________________________________________");
-			System.out.println(String.format("%10s%10s%10s%10s", "보험명", "보험구분", "보험료", "납부하기"));
-			System.out.println("_______________________________________________________________");
+		Insurance selectedInsurance = customerInsuranceInfo.get(selectedIndex);
+		Payment selectedPayment = customerPaymentInfo.get(selectedIndex);
 
-			Insurance selectedInsurance = customerInsuranceInfo.get(selectedIndex);
-			String insuranceName = selectedInsurance.getInsuranceName();
-			String insuranceType = selectedInsurance.getType();
-			int basicPremium = selectedInsurance.getBasicPremium();
+		if (selectedPayment.isWhetherPayment()) {
+			System.out.println("[System] 이미 납부된 보험입니다.");
+			return;
+		} else {
+			if (selectedIndex >= 0 && selectedIndex < customerPaymentInfo.size()) {
+				// 선택한 인덱스에 해당하는 정보 출력
+				System.out.println("\n_______________________________________________________________");
+				System.out.println(String.format("%10s%10s%10s%10s", "보험명", "보험구분", "보험료", "납부하기"));
+				System.out.println("_______________________________________________________________");
 
-			System.out.println(
-					String.format("%10s%10s%10s%10s", insuranceName, insuranceType, basicPremium, selectionInput));
+				String insuranceName = selectedInsurance.getInsuranceName();
+				String insuranceType = selectedInsurance.getType();
+				int basicPremium = selectedInsurance.getBasicPremium();
 
-			String paymentButtonInput = inputReader.readLine().trim();
-			// 입력한 납부하기 버튼과 선택한 버튼이 일치할 경우 납부 방법 출력
-			if (paymentButtonInput.equals(selectionInput)) {
-				System.out.println("\n_______________________________________________");
-				System.out.println(String.format("%25s", "납부 방법 선택"));
-				System.out.println("_______________________________________________");
-				System.out.println(String.format("%25s", "1. 월보험료(완납)"));
-				System.out.println(String.format("%25s", "2. 월보험료(일부납)"));
+				System.out.println(
+						String.format("%10s%10s%10s%10s", insuranceName, insuranceType, basicPremium, selectionInput));
+				System.out.println("\n\n• 납부하기 버튼 입력 :");
+				String paymentButtonInput = inputReader.readLine().trim();
+				// 입력한 납부하기 버튼과 선택한 버튼이 일치할 경우 납부 방법 출력
+				if (paymentButtonInput.equals(selectionInput)) {
+					System.out.println("\n_______________________________________________");
+					System.out.println(String.format("%25s", "납부 방법 선택"));
+					System.out.println("_______________________________________________");
+					System.out.println(String.format("%25s", "1. 월보험료(완납)"));
+					System.out.println(String.format("%25s", "2. 월보험료(일부납)"));
 
-				System.out.print("\n\n• 납부 방법 버튼 선택 (1/2) : ");
-				String paymentMethodInput = inputReader.readLine().trim();
+					System.out.print("\n\n• 납부 방법 버튼 선택 (1/2) : ");
+					String paymentMethodInput = inputReader.readLine().trim();
 
-				if (paymentMethodInput.equals("1")) {
-					// 월보험료(완납) 버튼을 클릭한 경우
-					System.out.println("[System] 월보험료(완납) 납부가 완료되었습니다.");
-					// 납입 여부, 납부일 업데이트
-					for (Payment payment : customerPaymentInfo) {
-						if (payment.getInsuranceID().equals(selectedInsurance.getInsuranceID())) {
-							payment.setDateOfPayment(LocalDate.now());
-							payment.setWhetherPayment(true);
-							paymentListImpl.update(payment);
-						}
-					}
+					if (paymentMethodInput.equals("1")) {
+						// 월보험료(완납) 버튼을 클릭한 경우
 
-				} else if (paymentMethodInput.equals("2")) {
-					// A3. 월보험료(일부납) 버튼을 클릭할 경우
-					System.out.print("\n• 일부 납부할 금액을 입력해 주세요: ");
-					String partialPaymentInput = inputReader.readLine().trim();
-					int partialPayment = Integer.parseInt(partialPaymentInput);
-
-					if (partialPayment <= 0 || partialPayment > selectedInsurance.getBasicPremium()) {
-						System.out.println("[System] 잘못된 금액입니다.");
-					} else {
-						int remainingAmount = selectedInsurance.getBasicPremium() - partialPayment;
-						System.out.println(
-								"[System] " + partialPayment + "원 납부가 완료되었습니다. 남은 보험료는 " + remainingAmount + "원입니다.");
-
-						// 보험료 업데이트
-						selectedInsurance.setBasicPremium(remainingAmount);
-
-						// 납입 여부 업데이트 (보험료가 0이 된 경우에만 true로 변경)
-						if (remainingAmount == 0) {
-							for (Payment payment : customerPaymentInfo) {
-								if (payment.getInsuranceID().equals(selectedInsurance.getInsuranceID())) {
-									payment.setDateOfPayment(LocalDate.now());
-									payment.setWhetherPayment(true);
-									paymentListImpl.update(payment);
-								}
+						// 납입 여부, 납부일 업데이트
+						for (Payment payment : customerPaymentInfo) {
+							if (payment.getInsuranceID().equals(selectedPayment.getInsuranceID())
+									&& payment.getCustomerID().equals(selectedPayment.getCustomerID())
+									&& payment.getDateOfPayment().equals(selectedPayment.getDateOfPayment())) {
+								System.out.println("[System] 월보험료(완납) 납부가 완료되었습니다.");
+								System.out.println(payment);
+								payment.setDateOfPayment(LocalDate.now());
+								payment.setWhetherPayment(true);
+								paymentListImpl.update(payment);
+								paymentListImpl.updateWhetherPayment(selectedPayment.getCustomerID(),
+										selectedPayment.getInsuranceID());
 							}
 						}
 
+					} else if (paymentMethodInput.equals("2")) {
+						// A3. 월보험료(일부납) 버튼을 클릭할 경우
+						System.out.print("\n• 일부 납부할 금액을 입력해 주세요: ");
+						String partialPaymentInput = inputReader.readLine().trim();
+						int partialPayment = Integer.parseInt(partialPaymentInput);
+
+						if (partialPayment <= 0 || partialPayment > selectedInsurance.getBasicPremium()) {
+							System.out.println("[System] 잘못된 금액입니다.");
+						} else {
+							int remainingAmount = selectedInsurance.getBasicPremium() - partialPayment;
+							System.out.println("[System] " + partialPayment + "원 납부가 완료되었습니다. 남은 보험료는 "
+									+ remainingAmount + "원입니다.");
+
+							// 보험료 업데이트
+							selectedInsurance.setBasicPremium(remainingAmount);
+
+							// 납입 여부 업데이트 (보험료가 0이 된 경우에만 true로 변경)
+							if (remainingAmount == 0) {
+								for (Payment payment : customerPaymentInfo) {
+									if (payment.getInsuranceID().equals(selectedInsurance.getInsuranceID())) {
+										payment.setDateOfPayment(LocalDate.now());
+										payment.setWhetherPayment(true);
+										paymentListImpl.update(payment);
+									}
+								}
+							}
+
+						}
 					}
+				} else {
+					System.out.println("[System] 보험료 납부를 취소했습니다.");
 				}
+			} else {
+				System.out.println("[System] 잘못된 버튼 선택입니다.");
 			}
-		} else {
-			System.out.println("[System] 잘못된 버튼 선택입니다.");
 		}
+
 	}
 
 	// End Of ux39) 보험료를 납부한다.

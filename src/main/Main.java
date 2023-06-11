@@ -130,7 +130,7 @@ public class Main {
 				case "2":
 					showOnSaleInsurance(insuranceList, insuranceApplicationList, customerListImpl,
 							familyHistoryListImpl, guaranteeList, termsListImpl, inputReader, "Customer");
-					break;		
+					break;
 				case "3":
 					showCouncel(inputReader, counselApplicationListImpl, counselListImpl, customerListImpl);
 					break;
@@ -150,23 +150,23 @@ public class Main {
 				case "7":
 					retrieveCompensationClaim(insuranceList, compensationClaimList, carAccidentList, surveyList,
 							inputReader);
-					break;			
+					break;
 				case "8":
 					designInsurance(insuranceList, termsListImpl, customerListImpl, familyHistoryListImpl,
 							guaranteeList, inputReader, insuranceApplicationList);
-					break;				
+					break;
 				case "9":
 					showManageConsultation(inputReader, counselListImpl, customerListImpl, counselApplicationListImpl);
 					break;
 				case "10":
 					showInsuranceApplicationList(contractListImpl, insuranceApplicationList, insuranceList,
 							customerListImpl, familyHistoryListImpl, inputReader);
-					break;				
+					break;
 				case "11":
 					// 추후 수정 - 계약유지대상자 조회 하면에서 '만기 계약자 조회 메뉴' 클릭 시 이동하는 곳
 					showPaymentManagement(inputReader, customerListImpl, contractListImpl, paymentListImpl,
 							insuranceList);
-					break;			
+					break;
 				case "x":
 					break;
 				default:
@@ -201,7 +201,7 @@ public class Main {
 		}
 
 	}
-	
+
 	private static void showMenu() {
 		System.out.println("\n****************** 보험사 초기 화면 *******************");
 		System.out.println("==========고객용=========");
@@ -259,16 +259,18 @@ public class Main {
 		case "2":
 			System.out.println("청약서를 조회할 신청건의 신청ID를 입력하세요");
 			inputAID = inputReader.readLine().trim();
-			if (insuranceApplicationList.getApplicationbyId(inputAID) == null) System.out.println("존재하지 않는 ID입니다");
+			if (insuranceApplicationList.getApplicationbyId(inputAID) == null)
+				System.out.println("존재하지 않는 ID입니다");
 			else
-			System.out.println(insuranceApplicationList.getApplicationbyId(inputAID).getSubscriptionFilePath());
+				System.out.println(insuranceApplicationList.getApplicationbyId(inputAID).getSubscriptionFilePath());
 
 			break;
 		case "3":
 			System.out.println("보험료를 산정할 신청건의 신청ID를 입력하세요");
 			inputAID = inputReader.readLine().trim();
-			if (insuranceApplicationList.getApplicationbyId(inputAID) == null) System.out.println("존재하지 않는 ID입니다");
-			else{
+			if (insuranceApplicationList.getApplicationbyId(inputAID) == null)
+				System.out.println("존재하지 않는 ID입니다");
+			else {
 				insuranceApplication = insuranceApplicationList.getApplicationbyId(inputAID);
 				insurance = insuranceList.getInsurancebyId(insuranceApplication.getInsuranceID());
 				Customer customer1 = customerListImpl.getCustomerByID(insuranceApplication.getCustomerID());
@@ -281,8 +283,8 @@ public class Main {
 	private static void ratePremium(InsuranceApplicationList insuranceApplicationList, ContractList contractList,
 			InsuranceApplication insuranceApplication, Insurance insurance, Customer customer,
 			FamilyHistoryList familyHistoryList, BufferedReader inputReader) throws Exception {
-		System.out.println(insurance.getType() + " " + insurance.getInsuranceName() + " 기본보험료:" + insurance.getBasicPremium()
-				+ " 요율:" + insurance.getRate());
+		System.out.println(insurance.getType() + " " + insurance.getInsuranceName() + " 기본보험료:"
+				+ insurance.getBasicPremium() + " 요율:" + insurance.getRate());
 		System.out.println(customer.getCustomerName() + " " + customer.getBirth() + " " + customer.getEGender() + " "
 				+ customer.getAddress() + " " + customer.getPnumber() + " " + customer.getJob());
 		for (FamilyHistory familyHistory : familyHistoryList.getFamilyHistoryByCID(customer.getCustomerID())) {
@@ -703,7 +705,8 @@ public class Main {
 		if (save.equals("Y") || save.equals("y")) {
 			if (counselApplicationList.update(counselApplication))
 				System.out.println("저장되었습니다.");
-			else System.out.println("저장되지 않았습니다.");
+			else
+				System.out.println("저장되지 않았습니다.");
 		}
 	}
 
@@ -886,7 +889,7 @@ public class Main {
 				System.out.println("고객 정보가 삭제되었습니다.");
 			} else {
 				Customer newCustomer = getUpdatedCustomer(inputReader);
-				customerListImpl.update(newCustomer, id); 
+				customerListImpl.update(newCustomer, id);
 				// 고객 정보 입력 받아서 해당 고객 업데이트
 				System.out.println("고객 정보가 저장되었습니다.");
 			}
@@ -1045,7 +1048,8 @@ public class Main {
 		System.out.println("****************** Compensation Claim *******************");
 		System.out.println("개인정보 확인을 위해 고객ID를 입력해주세요");
 		String inputCustomerId = inputReader.readLine().trim();
-		if (customerList.getCustomerByID(inputCustomerId) == null) System.out.println("존재하지 않는 ID입니다");
+		if (customerList.getCustomerByID(inputCustomerId) == null)
+			System.out.println("존재하지 않는 ID입니다");
 		else {
 			System.out.println("고객님이 가입하신 보험 정보는 아래와 같습니다.\n" + "보험금을 청구할 보험ID를 입력하세요.");
 			ArrayList<Contract> contracts = contractList.getContractsByCID(inputCustomerId);
@@ -1061,15 +1065,18 @@ public class Main {
 			else {
 				compensationClaim.setCustomerID(inputCustomerId);
 				compensationClaim.setInsuranceID(inputInsuranceId);
-				compensationClaim.setCCID("CC" + compensationClaim.getInsuranceID() + compensationClaim.getCustomerID());
+				compensationClaim
+						.setCCID("CC" + compensationClaim.getInsuranceID() + compensationClaim.getCustomerID());
 				if (compensationClaimList.getCompensationClaimbyID(compensationClaim.getCCID()) != null) {
 					System.out.println("해당 보험에 대한 기존 청구건이 아직 심사완료되지 않았습니다. 기존 청구건의 심사가 끝난 뒤 다시 이용바랍니다.");
 
-				}else {
-					Insurance selectedInsurance = insuranceList.retrieveInsuranceDetail(compensationClaim.getInsuranceID());
-					System.out.println("보험종류: " + selectedInsurance.getType() + "  보험명: " + selectedInsurance.getInsuranceName()
-							+ "\n" + "보험금 청구를 위한 서류 목록(하나의 압축파일로 업로드)\n" + "1. 보험금 청구서" + "  2. 개인(신용)정보처리동의서"
-							+ "  3. 수익자 신분증(앞면) 사본" + "  4. 수익자 통장 사본\n" + "보험종류가 자동차보험인 경우, 5. 교통사고 사실 확인원  6. 교통사고신속처리협의서 추가 제출");
+				} else {
+					Insurance selectedInsurance = insuranceList
+							.retrieveInsuranceDetail(compensationClaim.getInsuranceID());
+					System.out.println("보험종류: " + selectedInsurance.getType() + "  보험명: "
+							+ selectedInsurance.getInsuranceName() + "\n" + "보험금 청구를 위한 서류 목록(하나의 압축파일로 업로드)\n"
+							+ "1. 보험금 청구서" + "  2. 개인(신용)정보처리동의서" + "  3. 수익자 신분증(앞면) 사본" + "  4. 수익자 통장 사본\n"
+							+ "보험종류가 자동차보험인 경우, 5. 교통사고 사실 확인원  6. 교통사고신속처리협의서 추가 제출");
 					System.out.print("접수자명: ");
 					compensationClaim.setReceptionistName(inputReader.readLine().trim());
 					System.out.print("접수자 전화번호: ");
@@ -1088,12 +1095,14 @@ public class Main {
 						CarAccident carAccident = createCarAccident(compensationClaim, inputReader);
 						if (compensationClaimList.createCompensationClaim(compensationClaim)
 								&& carAccidentList.createCarAccident(carAccident))
-							System.out.println(compensationClaim.getCCID() + "신청이 완료되었습니다. 심사 결과에 따라 보상이 제한되거나 거절될 수 있습니다.");
+							System.out.println(
+									compensationClaim.getCCID() + "신청이 완료되었습니다. 심사 결과에 따라 보상이 제한되거나 거절될 수 있습니다.");
 						else
 							System.out.println("신청에 실패하였습니다. 다시 시도해주십시오.");
 					} else {
 						if (compensationClaimList.createCompensationClaim(compensationClaim)) {
-							System.out.println(compensationClaim.getCCID() + "신청이 완료되었습니다. 심사 결과에 따라 보상이 제한되거나 거절될 수 있습니다.");
+							System.out.println(
+									compensationClaim.getCCID() + "신청이 완료되었습니다. 심사 결과에 따라 보상이 제한되거나 거절될 수 있습니다.");
 						} else
 							System.out.println("신청에 실패하였습니다. 다시 시도해주십시오.");
 					}
@@ -1112,58 +1121,65 @@ public class Main {
 		System.out.println("손해사정 내용을 조회하시겠습니까? (Y/N)");
 		String userChoice = inputReader.readLine().trim();
 		switch (userChoice) {
+		case "Y":
+			System.out.println("청구ID를 입력하세요: ");
+			String inputCCID = inputReader.readLine().trim();
+			if (compensationClaimList.getCompensationClaimbyID(inputCCID) == null)
+				System.out.println("존재하지 않는 ID입니다");
+			else
+				retrieveSurvey(compensationClaimList, carAccidentList, surveyList, insuranceList, inputCCID,
+						inputReader);
+			break;
+		case "N":
+			System.out.println("초기화면으로 돌아갑니다.");
+			break;
+		}
+	}
+
+	private static void retrieveSurvey(CompensationClaimList compensationClaimList, CarAccidentList carAccidentList,
+			SurveyList surveyList, InsuranceList insuranceList, String CCID, BufferedReader inputReader)
+			throws Exception {
+		Survey survey = surveyList.getSurveyByID(CCID);
+		if (!(survey == null)) {
+			System.out.println("청구ID: " + survey.getCCID() + "\n담당자명:" + survey.getManagerName() + "\n조사보고서: "
+					+ survey.getReportFilePath() + "\n손해사정료: " + survey.getSurveyFee() + "\n결정보험금: "
+					+ survey.getDecisionMoney() + "\n면/부책(면책:false, 부책:true): " + survey.isResponsibility()
+					+ "\n면/부책 사유: " + survey.getResponsibilityReason());
+			System.out.println("1. 손해사정 데이터 수정\n2. 결정보험금 지급하기");
+			switch (inputReader.readLine().trim()) {
+			case "1":
+				modifySurvey(surveyList, survey, inputReader);
+				break;
+			case "2":
+				CompensationClaim compensationClaim = compensationClaimList.getCompensationClaimbyID(survey.getCCID());
+				System.out.println(
+						compensationClaim.getReceptionistName() + " " + compensationClaim.getReceptionistPNumber() + " "
+								+ insuranceList.getInsurancebyId(compensationClaim.getInsuranceID()).getInsuranceName()
+								+ " " + compensationClaim.getBank() + " " + compensationClaim.getAccountNumber() + " "
+								+ compensationClaim.getAccountHolderName() + " " + survey.getDecisionMoney() + "원");
+				requestBanking();
+				compensationClaimList.delete(compensationClaim.getCCID());
+				if (insuranceList.getInsurancebyId(compensationClaim.getInsuranceID()).getType() == "Car") {
+					CarAccident carAccident = carAccidentList.getCarAccidentByID(compensationClaim.getCCID());
+					carAccidentList.delete(carAccident.getCCID());
+					break;
+				}
+			}
+		} else {
+			System.out.println("손해사정된 내용이 없습니다. 손해사정 데이터를 입력하시겠습니까? (Y/N)");
+			switch (inputReader.readLine().trim()) {
 			case "Y":
-				System.out.println("청구ID를 입력하세요: ");
-				String inputCCID = inputReader.readLine().trim();
-				if (compensationClaimList.getCompensationClaimbyID(inputCCID) == null)
-					System.out.println("존재하지 않는 ID입니다");
-				else retrieveSurvey(compensationClaimList, carAccidentList, surveyList, insuranceList, inputCCID, inputReader);
+				createSurvey(compensationClaimList, carAccidentList, surveyList, insuranceList, CCID, inputReader);
 				break;
 			case "N":
 				System.out.println("초기화면으로 돌아갑니다.");
 				break;
+			}
 		}
 	}
 
-	private static void retrieveSurvey(CompensationClaimList compensationClaimList, CarAccidentList carAccidentList, SurveyList surveyList, InsuranceList insuranceList, String CCID, BufferedReader inputReader) throws Exception {
-		Survey survey = surveyList.getSurveyByID(CCID);
-		if(!(survey == null)){
-			System.out.println("청구ID: " + survey.getCCID() + "\n담당자명:" + survey.getManagerName() + "\n조사보고서: " + survey.getReportFilePath()
-					+ "\n손해사정료: " + survey.getSurveyFee() + "\n결정보험금: " + survey.getDecisionMoney() + "\n면/부책(면책:false, 부책:true): "
-					+ survey.isResponsibility() + "\n면/부책 사유: " + survey.getResponsibilityReason());
-			System.out.println("1. 손해사정 데이터 수정\n2. 결정보험금 지급하기");
-			switch(inputReader.readLine().trim()) {
-				case "1":
-					modifySurvey(surveyList, survey, inputReader);
-					break;
-				case "2":
-					CompensationClaim compensationClaim = compensationClaimList.getCompensationClaimbyID(survey.getCCID());
-					System.out.println(compensationClaim.getReceptionistName() + " " + compensationClaim.getReceptionistPNumber()
-							+ " " + insuranceList.getInsurancebyId(compensationClaim.getInsuranceID()).getInsuranceName()
-							+ " " + compensationClaim.getBank() + " " + compensationClaim.getAccountNumber() + " " + compensationClaim.getAccountHolderName()
-							+ " " + survey.getDecisionMoney() + "원");
-					requestBanking();
-					compensationClaimList.delete(compensationClaim.getCCID());
-					if (insuranceList.getInsurancebyId(compensationClaim.getInsuranceID()).getType() == "Car") {
-						CarAccident carAccident = carAccidentList.getCarAccidentByID(compensationClaim.getCCID());
-						carAccidentList.delete(carAccident.getCCID());
-						break;
-					}
-			}
-		} else{
-				System.out.println("손해사정된 내용이 없습니다. 손해사정 데이터를 입력하시겠습니까? (Y/N)");
-				switch (inputReader.readLine().trim()) {
-					case "Y":
-						createSurvey(compensationClaimList, carAccidentList, surveyList, insuranceList, CCID, inputReader);
-						break;
-					case "N":
-						System.out.println("초기화면으로 돌아갑니다.");
-						break;
-				}
-			}
-	}
-
-	private static void modifySurvey(SurveyList surveyList, Survey survey, BufferedReader inputReader) throws Exception {
+	private static void modifySurvey(SurveyList surveyList, Survey survey, BufferedReader inputReader)
+			throws Exception {
 		String choice = "";
 		System.out.println("수정할 정보를 선택하고 내용을 입력하세요.");
 		System.out.println("1. 담당자명, 2. 조사보고서 업로드, 3. 손해사정료, 4. 결정보험금, 5. 면/부책(면책:false, 부책:true), 6. 면/부책 사유");
@@ -1172,33 +1188,42 @@ public class Main {
 		System.out.print("수정할 내용 :");
 		String content = inputReader.readLine().trim();
 		switch (choice) {
-			case ("1"):
-				survey.setManagerName(content);
-				break;
-			case ("2"):
-				survey.setReportFilePath(content);
-				break;
-			case ("3"):
-				if (isInteger(content)) survey.setSurveyFee(Integer.valueOf(content));
-				else System.out.println("숫자로 입력되지 않아 수정이 저장되지 않았습니다.");
-				break;
-			case ("4"):
-				if (isInteger(content)) survey.setDecisionMoney(Integer.valueOf(content));
-				else System.out.println("숫자로 입력되지 않아 수정이 저장되지 않았습니다.");
-				break;
-			case ("5"):
-				if (content.equals("true")) survey.setResponsibility(Boolean.parseBoolean(content));
-				else if (content.equals("false")) survey.setResponsibility(Boolean.parseBoolean(content));
-				else System.out.println("true또는 false로 입력되지 않아 수정이 저장되지 않았습니다.");
-				break;
-			case ("6"):
-				survey.setResponsibilityReason(content);
-				break;
-			default:
-				System.out.println("올바르지 않은 선택지입니다.");
+		case ("1"):
+			survey.setManagerName(content);
+			break;
+		case ("2"):
+			survey.setReportFilePath(content);
+			break;
+		case ("3"):
+			if (isInteger(content))
+				survey.setSurveyFee(Integer.valueOf(content));
+			else
+				System.out.println("숫자로 입력되지 않아 수정이 저장되지 않았습니다.");
+			break;
+		case ("4"):
+			if (isInteger(content))
+				survey.setDecisionMoney(Integer.valueOf(content));
+			else
+				System.out.println("숫자로 입력되지 않아 수정이 저장되지 않았습니다.");
+			break;
+		case ("5"):
+			if (content.equals("true"))
+				survey.setResponsibility(Boolean.parseBoolean(content));
+			else if (content.equals("false"))
+				survey.setResponsibility(Boolean.parseBoolean(content));
+			else
+				System.out.println("true또는 false로 입력되지 않아 수정이 저장되지 않았습니다.");
+			break;
+		case ("6"):
+			survey.setResponsibilityReason(content);
+			break;
+		default:
+			System.out.println("올바르지 않은 선택지입니다.");
 		}
-		if (surveyList.updateSurvey(survey)) System.out.println("수정이 완료되었습니다.");
-		else System.out.println("수정에 실패했습니다.");
+		if (surveyList.updateSurvey(survey))
+			System.out.println("수정이 완료되었습니다.");
+		else
+			System.out.println("수정에 실패했습니다.");
 	}
 
 	private static void showList(ArrayList<?> dataList) {
@@ -1209,8 +1234,9 @@ public class Main {
 		System.out.println(list);
 	}
 
-	private static void createSurvey(CompensationClaimList compensationClaimList, CarAccidentList carAccidentList, SurveyList surveyList,
-									 InsuranceList insuranceList, String CCID, BufferedReader inputReader) throws Exception {
+	private static void createSurvey(CompensationClaimList compensationClaimList, CarAccidentList carAccidentList,
+			SurveyList surveyList, InsuranceList insuranceList, String CCID, BufferedReader inputReader)
+			throws Exception {
 		Survey survey = new Survey();
 		System.out.println("****************** Survey *******************");
 		survey.setCCID(CCID);
@@ -1230,19 +1256,21 @@ public class Main {
 		if (surveyList.createSurvey(survey)) {
 			System.out.println("입력이 완료되었습니다.");
 			System.out.println("결정보험금(" + survey.getDecisionMoney() + "원)을 지급요청하시겠습니까? (Y/N)");
-			if (inputReader.readLine().trim().equals("Y")){
-				System.out.println(compensationClaim.getReceptionistName() + " " + compensationClaim.getReceptionistPNumber()
-								+ " " + insuranceList.getInsurancebyId(compensationClaim.getInsuranceID()).getInsuranceName()
-								+ " " + compensationClaim.getBank() + " " + compensationClaim.getAccountNumber() + " " + compensationClaim.getAccountHolderName()
-								+ " " + survey.getDecisionMoney() + "원");
-				if(requestBanking()){
-					compensationClaimList.delete(compensationClaim.getCCID()); //compensationClaim, survey 삭제
-					if(insuranceList.getInsurancebyId(compensationClaim.getInsuranceID()).getType() == "Car"){
+			if (inputReader.readLine().trim().equals("Y")) {
+				System.out.println(
+						compensationClaim.getReceptionistName() + " " + compensationClaim.getReceptionistPNumber() + " "
+								+ insuranceList.getInsurancebyId(compensationClaim.getInsuranceID()).getInsuranceName()
+								+ " " + compensationClaim.getBank() + " " + compensationClaim.getAccountNumber() + " "
+								+ compensationClaim.getAccountHolderName() + " " + survey.getDecisionMoney() + "원");
+				if (requestBanking()) {
+					compensationClaimList.delete(compensationClaim.getCCID()); // compensationClaim, survey 삭제
+					if (insuranceList.getInsurancebyId(compensationClaim.getInsuranceID()).getType() == "Car") {
 						CarAccident carAccident = carAccidentList.getCarAccidentByID(compensationClaim.getCCID());
 						carAccidentList.delete(carAccident.getCCID());
 					}
 				}
-			} else System.out.println("초기화면으로 돌아갑니다.");
+			} else
+				System.out.println("초기화면으로 돌아갑니다.");
 		} else
 			System.out.println("신청에 실패하였습니다. 다시 시도해주십시오.");
 	}
@@ -1505,17 +1533,20 @@ public class Main {
 				if (choice.equals("Y") || choice.equals("y")) {
 					System.out.println("가입 신청할 보험ID를 입력하세요");
 					String inputInsuranceId = inputReader.readLine().trim();
-					if (insuranceList.getInsurancebyId(inputInsuranceId) == null) System.out.println("존재하지 않는 ID입니다");
+					if (insuranceList.getInsurancebyId(inputInsuranceId) == null)
+						System.out.println("존재하지 않는 ID입니다");
 					else {
 						Insurance insurance = insuranceList.getInsurancebyId(inputInsuranceId);
 						System.out.println("********** 보험 정보 **********");
 						System.out.println("보험종류: " + insurance.getType() + "\n보험명: " + insurance.getInsuranceName()
 								+ "\n최대보장한도: " + insurance.getMaxCompensation() + "\n보험기간: "
-								+ insurance.getPeriodOfInsurance() + "\n납입기간: " + insurance.getPaymentPeriod() + "\n가입나이: "
-								+ insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle() + "\n보장내용(보통약관):");
+								+ insurance.getPeriodOfInsurance() + "\n납입기간: " + insurance.getPaymentPeriod()
+								+ "\n가입나이: " + insurance.getAgeOfTarget() + "\n납입주기: " + insurance.getPaymentCycle()
+								+ "\n보장내용(보통약관):");
 						ArrayList<Guarantee> guarantees = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID());
 						for (int i = 0; i < guarantees.size(); i++) {
-							Guarantee guaranteeByIID = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID()).get(i);
+							Guarantee guaranteeByIID = guaranteeList.getAllGuranteeByID(insurance.getInsuranceID())
+									.get(i);
 							Terms terms = termsList.getTermsByID(guaranteeByIID.getTermsID());
 							System.out.println("약관명: " + terms.getTermsName() + "  약관내용: " + terms.getTermsContent());
 						}
@@ -1542,7 +1573,8 @@ public class Main {
 		System.out.println("****************** Insurance Application *******************");
 		System.out.println("고객ID를 입력해주세요");
 		String inputCustomerId = inputReader.readLine().trim();
-		if (customerList.getCustomerByID(inputCustomerId) == null) System.out.println("존재하지 않는 ID입니다");
+		if (customerList.getCustomerByID(inputCustomerId) == null)
+			System.out.println("존재하지 않는 ID입니다");
 		else {
 			Customer customer = customerList.getCustomerByID(inputCustomerId);
 			insuranceApplication.setCustomerID(customer.getCustomerID());
@@ -1876,8 +1908,6 @@ public class Main {
 		}
 	}
 
-
-
 	// uc17) 가입된 보험을 조회한다.
 	private static void showSubscriptionInsurance(BufferedReader inputReader, ContractList contractListImpl,
 			CustomerList customerListImpl, InsuranceList insuranceListImpl, CompensationClaimList compensationClaim,
@@ -2027,29 +2057,12 @@ public class Main {
 		System.out.println("________________________________________\n");
 		System.out.printf("%-10s %-10s %-10s\n", centerAlign("[입력]", 10), centerAlign("[입력]", 10),
 				centerAlign("[Y/N]", 13));
-//			System.out.printf("\n\n[ %s 해지 화면 ]", insuranceStatus);
-//			System.out.println(
-//					"\n_____________________________________________________________________________________________");
-//			System.out.printf("\n%-10s %-10s %-10s %-10s %-10s\n", centerAlign("이름", 10), centerAlign("전화번호", 10),
-//					centerAlign("해지 약관 안내", 13), centerAlign("해지 약관 동의", 13), centerAlign("해지하기 버튼", 10));
-//			System.out.println(
-//					"_____________________________________________________________________________________________\n");
-//			System.out.printf("%-10s %-10s %-10s %-10s %-10s\n", centerAlign("[입력]", 10), centerAlign("[입력]", 10),
-//					centerAlign("[보기]", 15), centerAlign("[Y/N]", 15), centerAlign("[Y/N]", 13));
-
-//			System.out.print("\n\n• 해지 약관 안내 보기 (Y/N) : ");
-//			String choice = systemInput.readLine().trim();
-//			// A1. 해지 약관 안내를 누른 경우
-//			if (choice.equals("Y"))
-//				showTerminationPolicyMessage();
 
 		System.out.printf("\n\n[ %s 해지 정보 입력창 ]", insuranceStatus);
 		System.out.print("\n[ 이름 ] : ");
 		String inputName = systemInput.readLine().trim();
 		System.out.print("[ 전화번호 ] : ");
 		String inputPH = systemInput.readLine().trim();
-//			System.out.print("해지 약관 동의 (Y/N) : ");
-//			String inputAgree = systemInput.readLine().trim();
 		System.out.print("\n해당 보험을 해지하시겠습니까? (Y/N) : ");
 		String inputCancel = systemInput.readLine().trim();
 
@@ -2063,26 +2076,11 @@ public class Main {
 					compensationClaim, selectedInsuranceId, selectedCustomerId, totalPremiumPaid, insuranceName,
 					isMatured);
 		}
-//			if (inputName.equals(customerName) && inputPH.equals(customerPH) && inputAgree.equals("N"))
-//				// A3. 해지 약관 동의를 체크하지 않은 경우
-//				System.out.println("\n[System] 해지 약관에 동의하지 않을 경우 해지가 불가능합니다.");
-//			if (inputName.equals(customerName) && inputPH.equals(customerPH) && inputAgree.equals("Y")
-//					&& inputCancel.equals("Y")) {
-//				System.out.println("해지 환급금 요청 화면");
-//				requestTerminationRefund(insuranceStatus, customerName, customerPH, info, contractListImpl, systemInput,
-//						compensationClaim, selectedInsuranceId, selectedCustomerId, totalPremiumPaid, insuranceName,
-//						isMatured);
-//			}
 
 		if (inputName.equals(customerName) && inputPH.equals(customerPH) && inputCancel.equals("N"))
 			System.out.println("[System] 해지 요청을 취소합니다.");
 
 	}
-
-//		private static void showTerminationPolicyMessage() {
-//			// A1. 해지 약관 안내를 누른 경우
-	//
-//		}
 
 	// End Of uc18) 보험을 중도 해지한다. , uc19) 만기 보험을 해지하다.
 	// uc20) 해지환급금 지급을 요청한다.
@@ -2431,7 +2429,7 @@ public class Main {
 		String choice = inputReader.readLine().trim();
 		if (choice.equals("Y")) {
 			// A1. 대상자에서 제외하고 싶은 경우
-//				customerListImpl.deleteUnpaidCustomer(customerListImpl.retrieveCustomer(selectedCustomerId));
+//					customerListImpl.deleteUnpaidCustomer(customerListImpl.retrieveCustomer(selectedCustomerId));
 			System.out.println("\n[System] 대상자에서 제외되었습니다.");
 		}
 	}
@@ -2592,14 +2590,6 @@ public class Main {
 							}
 						}
 					}
-//					} else {
-//						// A4. 잘못된 납입상태변경버튼을 선택한 경우
-//						System.out.println("[System] 유효하지 않은 버튼 번호입니다.");
-//						// 다시 선택
-//						System.out.print("\n\n• 납입상태변경버튼 선택 (버튼 번호 입력 또는 q 입력하여 종료): ");
-//						paymentUpdateBtn = inputReader.readLine().trim();
-//					}
-
 					return;
 
 				} else {
@@ -2642,8 +2632,8 @@ public class Main {
 
 		System.out.println(
 				"_____________________________________________________________________________________________________________");
-		System.out.println(String.format("%10s%10s%10s%10s%10s%10s%10s%10s", "보험명", "보험구분", "납부여부", "보험료", "미납기간",
-				"미납금", "선택 버튼", "납부방법변경버튼"));
+		System.out.println(
+				String.format("%10s%10s%10s%10s%10s%10s%10s", "보험명", "보험구분", "납부여부", "보험료", "미납기간", "미납금", "선택 버튼"));
 		System.out.println(
 				"_____________________________________________________________________________________________________________");
 
@@ -2662,7 +2652,6 @@ public class Main {
 			for (Payment payment : customerPaymentInfo) {
 				if (payment.getInsuranceID().equals(insuranceId)) {
 					LocalDate paymentDate = payment.getDateOfPayment();
-					System.out.println(payment.getInsuranceID() + " " + payment.isWhetherPayment());
 					isPaid = payment.isWhetherPayment();
 					if (paymentDate != null) { // 입력된 날짜 값이 null이 아닌 경우에만 처리
 						Date paymentDateConverted = java.sql.Date.valueOf(paymentDate); // Date로 변환
@@ -2681,29 +2670,26 @@ public class Main {
 							} else {
 								unpaidAmount += insurance.getBasicPremium();
 							}
-
 						}
-
 						if (isPaid) {
 							unpaidAmount = 0;
 							unpaidDays = 0;
 						}
 
 					}
-
-					// 선택 버튼 및 납부 방법 변경 버튼 표시
-					String selectionButton = String.format("%02d", index);
-					String paymentButton = String.valueOf(10 + index);
-
-					// 결과 출력
-					System.out.println(String.format("%10s%10s%13s%13s%8s%14s%8s%10s", insurance.getInsuranceName(),
-							insurance.getType(), isPaid, insurance.getBasicPremium(), unpaidDays, unpaidAmount,
-							selectionButton, paymentButton));
-
-					index++;
-					unpaidAmount = 0; // 초기화
 				}
 			}
+			// 선택 버튼 및 납부 방법 변경 버튼 표시
+			String selectionButton = String.valueOf(20 + index);
+			String paymentButton = String.valueOf(10 + index);
+
+			// 결과 출력
+			System.out.println(
+					String.format("%10s%10s%13s%13s%8s%14s%8s", insurance.getInsuranceName(), insurance.getType(),
+							isPaid, insurance.getBasicPremium(), unpaidDays, unpaidAmount, selectionButton));
+
+			index++;
+			unpaidAmount = 0; // 초기화
 
 		}
 
@@ -2711,102 +2697,112 @@ public class Main {
 		System.out.print("\n\n• 선택 버튼 입력 : ");
 		String selectionInput = inputReader.readLine().trim();
 
-		if (selectionInput.startsWith("0")) {
+		if (selectionInput.startsWith("2")) {
 			// 보험 선택 후 납입 (완납/일부납)
-			insurancePremiumPayment(inputReader, paymentListImpl, customerInsuranceInfo, customerPaymentInfo,
-					selectionInput);
-		} else if (selectionInput.startsWith("1")) {
-			// A2. 고객이 납부 방법 변경 버튼을 클릭할 경우
-			paymentMethodChange(selectionInput);
+			insurancePremiumPayment(contractListImpl, inputReader, paymentListImpl, customerInsuranceInfo,
+					customerPaymentInfo, selectionInput);
 		} else {
 			System.out.println("[System] 잘못된 버튼 선택입니다.");
 		}
 
 	}
 
-	private static void insurancePremiumPayment(BufferedReader inputReader, PaymentList paymentListImpl,
-			ArrayList<Insurance> customerInsuranceInfo, ArrayList<Payment> customerPaymentInfo, String selectionInput)
-			throws IOException {
+	private static void insurancePremiumPayment(ContractList contractListImpl, BufferedReader inputReader,
+			PaymentList paymentListImpl, ArrayList<Insurance> customerInsuranceInfo,
+			ArrayList<Payment> customerPaymentInfo, String selectionInput) throws Exception {
 		// 버튼 값이 0으로 시작하는 경우 선택한 인덱스에 해당하는 정보 출력
-		int selectedIndex = Integer.parseInt(selectionInput);
+//			String selectedIndexString = ("2" + selectionInput);
+		int selectedIndex = Integer.parseInt(selectionInput) - 20;
 
-		if (selectedIndex >= 0 && selectedIndex < customerInsuranceInfo.size()) {
-			// 선택한 인덱스에 해당하는 정보 출력
-			System.out.println("\n_______________________________________________________________");
-			System.out.println(String.format("%10s%10s%10s%10s", "보험명", "보험구분", "보험료", "납부하기"));
-			System.out.println("_______________________________________________________________");
+		Insurance selectedInsurance = customerInsuranceInfo.get(selectedIndex);
+		Payment selectedPayment = customerPaymentInfo.get(selectedIndex);
 
-			Insurance selectedInsurance = customerInsuranceInfo.get(selectedIndex);
-			String insuranceName = selectedInsurance.getInsuranceName();
-			String insuranceType = selectedInsurance.getType();
-			int basicPremium = selectedInsurance.getBasicPremium();
+		if (selectedPayment.isWhetherPayment()) {
+			System.out.println("[System] 이미 납부된 보험입니다.");
+			return;
+		} else {
+			if (selectedIndex >= 0 && selectedIndex < customerPaymentInfo.size()) {
+				// 선택한 인덱스에 해당하는 정보 출력
+				System.out.println("\n_______________________________________________________________");
+				System.out.println(String.format("%10s%10s%10s%10s", "보험명", "보험구분", "보험료", "납부하기"));
+				System.out.println("_______________________________________________________________");
 
-			System.out.println(
-					String.format("%10s%10s%10s%10s", insuranceName, insuranceType, basicPremium, selectionInput));
+				String insuranceName = selectedInsurance.getInsuranceName();
+				String insuranceType = selectedInsurance.getType();
+				int basicPremium = selectedInsurance.getBasicPremium();
 
-			String paymentButtonInput = inputReader.readLine().trim();
-			// 입력한 납부하기 버튼과 선택한 버튼이 일치할 경우 납부 방법 출력
-			if (paymentButtonInput.equals(selectionInput)) {
-				System.out.println("\n_______________________________________________");
-				System.out.println(String.format("%25s", "납부 방법 선택"));
-				System.out.println("_______________________________________________");
-				System.out.println(String.format("%25s", "1. 월보험료(완납)"));
-				System.out.println(String.format("%25s", "2. 월보험료(일부납)"));
+				System.out.println(
+						String.format("%10s%10s%10s%10s", insuranceName, insuranceType, basicPremium, selectionInput));
+				System.out.println("\n\n• 납부하기 버튼 입력 :");
+				String paymentButtonInput = inputReader.readLine().trim();
+				// 입력한 납부하기 버튼과 선택한 버튼이 일치할 경우 납부 방법 출력
+				if (paymentButtonInput.equals(selectionInput)) {
+					System.out.println("\n_______________________________________________");
+					System.out.println(String.format("%25s", "납부 방법 선택"));
+					System.out.println("_______________________________________________");
+					System.out.println(String.format("%25s", "1. 월보험료(완납)"));
+					System.out.println(String.format("%25s", "2. 월보험료(일부납)"));
 
-				System.out.print("\n\n• 납부 방법 버튼 선택 (1/2) : ");
-				String paymentMethodInput = inputReader.readLine().trim();
+					System.out.print("\n\n• 납부 방법 버튼 선택 (1/2) : ");
+					String paymentMethodInput = inputReader.readLine().trim();
 
-				if (paymentMethodInput.equals("1")) {
-					// 월보험료(완납) 버튼을 클릭한 경우
-					System.out.println("[System] 월보험료(완납) 납부가 완료되었습니다.");
-					// 납입 여부, 납부일 업데이트
-					for (Payment payment : customerPaymentInfo) {
-						if (payment.getInsuranceID().equals(selectedInsurance.getInsuranceID())) {
-							payment.setDateOfPayment(LocalDate.now());
-							payment.setWhetherPayment(true);
-							paymentListImpl.update(payment);
-						}
-					}
+					if (paymentMethodInput.equals("1")) {
+						// 월보험료(완납) 버튼을 클릭한 경우
 
-				} else if (paymentMethodInput.equals("2")) {
-					// A3. 월보험료(일부납) 버튼을 클릭할 경우
-					System.out.print("\n• 일부 납부할 금액을 입력해 주세요: ");
-					String partialPaymentInput = inputReader.readLine().trim();
-					int partialPayment = Integer.parseInt(partialPaymentInput);
-
-					if (partialPayment <= 0 || partialPayment > selectedInsurance.getBasicPremium()) {
-						System.out.println("[System] 잘못된 금액입니다.");
-					} else {
-						int remainingAmount = selectedInsurance.getBasicPremium() - partialPayment;
-						System.out.println(
-								"[System] " + partialPayment + "원 납부가 완료되었습니다. 남은 보험료는 " + remainingAmount + "원입니다.");
-
-						// 보험료 업데이트
-						selectedInsurance.setBasicPremium(remainingAmount);
-
-						// 납입 여부 업데이트 (보험료가 0이 된 경우에만 true로 변경)
-						if (remainingAmount == 0) {
-							for (Payment payment : customerPaymentInfo) {
-								if (payment.getInsuranceID().equals(selectedInsurance.getInsuranceID())) {
-									payment.setDateOfPayment(LocalDate.now());
-									payment.setWhetherPayment(true);
-									paymentListImpl.update(payment);
-								}
+						// 납입 여부, 납부일 업데이트
+						for (Payment payment : customerPaymentInfo) {
+							if (payment.getInsuranceID().equals(selectedPayment.getInsuranceID())
+									&& payment.getCustomerID().equals(selectedPayment.getCustomerID())
+									&& payment.getDateOfPayment().equals(selectedPayment.getDateOfPayment())) {
+								System.out.println("[System] 월보험료(완납) 납부가 완료되었습니다.");
+								System.out.println(payment);
+								payment.setDateOfPayment(LocalDate.now());
+								payment.setWhetherPayment(true);
+								paymentListImpl.update(payment);
+								paymentListImpl.updateWhetherPayment(selectedPayment.getCustomerID(),
+										selectedPayment.getInsuranceID());
 							}
 						}
 
+					} else if (paymentMethodInput.equals("2")) {
+						// A3. 월보험료(일부납) 버튼을 클릭할 경우
+						System.out.print("\n• 일부 납부할 금액을 입력해 주세요: ");
+						String partialPaymentInput = inputReader.readLine().trim();
+						int partialPayment = Integer.parseInt(partialPaymentInput);
+
+						if (partialPayment <= 0 || partialPayment > selectedInsurance.getBasicPremium()) {
+							System.out.println("[System] 잘못된 금액입니다.");
+						} else {
+							int remainingAmount = selectedInsurance.getBasicPremium() - partialPayment;
+							System.out.println("[System] " + partialPayment + "원 납부가 완료되었습니다. 남은 보험료는 "
+									+ remainingAmount + "원입니다.");
+
+							// 보험료 업데이트
+							selectedInsurance.setBasicPremium(remainingAmount);
+
+							// 납입 여부 업데이트 (보험료가 0이 된 경우에만 true로 변경)
+							if (remainingAmount == 0) {
+								for (Payment payment : customerPaymentInfo) {
+									if (payment.getInsuranceID().equals(selectedInsurance.getInsuranceID())) {
+										payment.setDateOfPayment(LocalDate.now());
+										payment.setWhetherPayment(true);
+										paymentListImpl.update(payment);
+									}
+								}
+							}
+
+						}
 					}
+				} else {
+					System.out.println("[System] 보험료 납부를 취소했습니다.");
 				}
+			} else {
+				System.out.println("[System] 잘못된 버튼 선택입니다.");
 			}
-		} else {
-			System.out.println("[System] 잘못된 버튼 선택입니다.");
 		}
+
 	}
 
 	// End Of ux39) 보험료를 납부한다.
-	// uc40) 보험료 납부 방식을 변경한다.
-	private static void paymentMethodChange(String selectionInput) {
-
-	}
 
 }

@@ -1912,6 +1912,7 @@ public class Main {
 	private static void showSubscriptionInsurance(BufferedReader inputReader, ContractList contractListImpl,
 			CustomerList customerListImpl, InsuranceList insuranceListImpl, CompensationClaimList compensationClaim,
 			PaymentList paymentListImpl) throws ParseException, Exception {
+
 		// 가입된 보험을 조회하다.
 		System.out.println("\n[ 보험자 정보 확인 ]");
 		System.out.print("[ 이름 ] : ");
@@ -2049,7 +2050,7 @@ public class Main {
 	private static void insuranceTermination(String insuranceStatus, String customerName, String customerPH,
 			String info, ContractList contractListImpl, BufferedReader systemInput,
 			CompensationClaimList compensationClaim, String selectedInsuranceId, String selectedCustomerId,
-			double totalPremiumPaid, String insuranceName, boolean isMatured) throws IOException {
+			double totalPremiumPaid, String insuranceName, boolean isMatured) throws Exception {
 		System.out.printf("\n\n[ %s 해지 화면 ]", insuranceStatus);
 		System.out.println("\n________________________________________");
 		System.out.printf("\n%-10s %-10s %-10s\n", centerAlign("이름", 10), centerAlign("전화번호", 10),
@@ -2084,10 +2085,11 @@ public class Main {
 
 	// End Of uc18) 보험을 중도 해지한다. , uc19) 만기 보험을 해지하다.
 	// uc20) 해지환급금 지급을 요청한다.
+	@SuppressWarnings("unlikely-arg-type")
 	private static void requestTerminationRefund(String insuranceStatus, String customerName, String customerPH,
 			String info, ContractList contractListImpl, BufferedReader systemInput,
 			CompensationClaimList compensationClaim, String selectedInsuranceId, String selectedCustomerId,
-			double totalPremiumPaid, String insuranceName, boolean isMatured) throws IOException {
+			double totalPremiumPaid, String insuranceName, boolean isMatured) throws Exception {
 
 		if (isMatured) {
 			double refundAmount = totalPremiumPaid * 0.8; // 예상 환급금액
@@ -2162,6 +2164,7 @@ public class Main {
 				if (!contractListImpl.updateCancellation(selectedCustomerId, selectedInsuranceId)) {
 					System.out.println("[System] 시스템 상 오류로 정상적으로 처리되지 않았습니다. 다시 시도해 주세요.");
 				} else {
+					contractListImpl.retrieve();
 					requestBanking();
 				}
 
@@ -2245,6 +2248,7 @@ public class Main {
 				if (!contractListImpl.updateCancellation(selectedCustomerId, selectedInsuranceId)) {
 					System.out.println("[System] 시스템 상 오류로 정상적으로 처리되지 않았습니다. 다시 시도해 주세요.");
 				} else {
+
 					requestBanking();
 				}
 
@@ -2431,6 +2435,8 @@ public class Main {
 			// A1. 대상자에서 제외하고 싶은 경우
 //					customerListImpl.deleteUnpaidCustomer(customerListImpl.retrieveCustomer(selectedCustomerId));
 			System.out.println("\n[System] 대상자에서 제외되었습니다.");
+		} else {
+			System.out.println("\n[System] 대상자 제외를 취소합니다.");
 		}
 	}
 
@@ -2623,6 +2629,13 @@ public class Main {
 		}
 
 		ArrayList<String> customerInsuranceIds = contractListImpl.getInsuranceIdFromCustomerId(customerId);
+
+		for (int i = 0; i < contractListImpl.getContractsByCID(customerId).size(); i++) {
+			if (contractListImpl.getContractsByCID(customerId).get(i).isCancellation()) {
+				customerInsuranceIds.remove(i);
+			}
+		}
+
 		ArrayList<Insurance> customerInsuranceInfo = new ArrayList<Insurance>();
 		ArrayList<Payment> customerPaymentInfo = paymentListImpl.retreiveCustomerPayment(customerId);
 
@@ -2755,7 +2768,6 @@ public class Main {
 									&& payment.getCustomerID().equals(selectedPayment.getCustomerID())
 									&& payment.getDateOfPayment().equals(selectedPayment.getDateOfPayment())) {
 								System.out.println("[System] 월보험료(완납) 납부가 완료되었습니다.");
-								System.out.println(payment);
 								payment.setDateOfPayment(LocalDate.now());
 								payment.setWhetherPayment(true);
 								paymentListImpl.update(payment);
